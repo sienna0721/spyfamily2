@@ -29,6 +29,7 @@ const hintText = document.querySelector("#hint-text");
 const gameCanvas = document.querySelector("#gameCanvas");
 const canvasContext = gameCanvas.getContext("2d");
 const canvasStatus = document.querySelector("#canvas-status");
+
 let anyaImg = new Image();
 anyaImg.src = "images/anya_sprite.png";
 anyaImg.addEventListener("load", () => {
@@ -47,13 +48,14 @@ videoTutorialModal.innerHTML = `
 dialogueScene.append(videoTutorialModal);
 
 const videoTutorialReadyButton = videoTutorialModal.querySelector(".video-tutorial-ready");
+
 let currentNodeId = "start";
 let isTyping = false;
 let typingTimer = null;
 let pendingAfterReminder = null;
 let canvasStatusTimer = null;
 
-// 第三關巡邏狀態：第一次依需求從 B 開始；第二次失敗後依提示改從 A 開始，讓玩家能完成 Euler path。
+// 第三關巡邏狀態：加入鎖定機制與自訂起點判定
 const patrolState = {
   active: false,
   currentNode: null,
@@ -324,8 +326,7 @@ function drawPatrolMap() {
     ctx.fillText(name, node.x, node.y);
   });
 
- 
-    // 用圖片呈現安妮亞目前所在的節點；尚未選起點時不顯示角色。
+  // 用圖片呈現安妮亞目前所在的節點；尚未選起點時不顯示角色。
   if (patrolState.currentNode) {
     const player = patrolNodes[patrolState.currentNode];
     if (anyaImg.complete && anyaImg.naturalWidth > 0) {
@@ -349,6 +350,7 @@ function resetPatrolState(startNode = null) {
   patrolState.inputLocked = false;
   drawPatrolMap();
 }
+
 function openVideoTutorial() {
   patrolState.canPickStart = false;
   videoTutorialModal.classList.add("modal-open");
@@ -384,6 +386,7 @@ function handleCanvasClick(event) {
   patrolState.startNode = nodeName;
   drawPatrolMap();
 }
+
 function showCanvasStatus(message, duration = 1000) {
   window.clearTimeout(canvasStatusTimer);
   canvasStatus.textContent = message;
@@ -417,6 +420,7 @@ function failPatrol() {
     openHintModal("路線卡住了！請重新用滑鼠選擇起始大樓，再試著一次走完所有走廊。");
   }, 1300);
 }
+
 function winPatrol() {
   stopPatrol();
   dialogueBox.hidden = false;
@@ -464,17 +468,6 @@ function handlePatrolKey(event) {
 
   patrolState.startLocked = true;
   patrolState.canPickStart = false;
-  patrolState.visitedEdges.add(key);
-  patrolState.currentNode = targetNode;
-  drawPatrolMap();
-
-  if (patrolState.visitedEdges.size === patrolEdges.length) {
-    winPatrol();
-    return;
-  }
-  if (getNeighbors(patrolState.currentNode, true).length === 0) failPatrol();
-}
-
   patrolState.visitedEdges.add(key);
   patrolState.currentNode = targetNode;
   drawPatrolMap();
