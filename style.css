@@ -127,7 +127,60 @@ h1 { margin: 0; color: var(--ink); font-size: clamp(2.4rem, 7vw, 6rem); font-wei
 
 /* 已選錯的密碼按鈕保留在鍵盤中，但不可再次互動。 */
 .disabled-btn { color: rgba(91, 89, 96, .5) !important; background: #dedbd5 !important; box-shadow: none !important; cursor: not-allowed !important; pointer-events: none; filter: grayscale(.7); }
+/* Video Tutorial Modal：Canvas 關卡教學提示框 */
+.video-tutorial-modal {
+  position: absolute;
+  inset: 0;
+  z-index: 12;
+  display: none;
+  place-items: center;
+  padding: 24px;
+  background: rgba(91, 89, 96, .34);
+}
 
+.video-tutorial-modal.modal-open {
+  display: grid;
+  animation: fade-in 220ms ease both;
+}
+
+.video-tutorial-content {
+  width: min(560px, 100%);
+  padding: 22px;
+  border: 1.5px solid var(--line);
+  border-radius: 34px 12px 28px 16px;
+  background: rgba(253, 251, 247, .97);
+  box-shadow: 5px 8px 0 rgba(102, 82, 74, .13), 0 18px 36px var(--shadow);
+  text-align: center;
+}
+
+.video-tutorial-content video {
+  display: block;
+  width: 100%;
+  max-height: 280px;
+  object-fit: cover;
+  border: 1.5px solid var(--line);
+  border-radius: 22px 10px 18px 12px;
+  background: var(--paper-deep);
+}
+
+.video-tutorial-text {
+  margin: 18px 4px 20px;
+  color: var(--ink);
+  font-size: 1rem;
+  font-weight: 800;
+  line-height: 1.8;
+}
+
+.video-tutorial-ready {
+  padding: 12px 22px;
+  border: 1.5px solid var(--line);
+  border-radius: 90px 14px 76px 16px / 16px 76px 14px 90px;
+  color: var(--ink);
+  background: var(--butter);
+  box-shadow: 3px 5px 0 rgba(102, 82, 74, .12);
+  cursor: pointer;
+  font-weight: 900;
+}
 @keyframes spin-star { to { transform: rotate(360deg); } }
 @keyframes pencil-glow { from { text-shadow: 0 0 5px var(--peach); } to { text-shadow: 0 0 24px var(--peach); } }
 @keyframes blink-dots { 0%, 20% { opacity: 0; } 50% { opacity: 1; } 80%, 100% { opacity: 0; } }
