@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="安妮亞入學大作戰｜視覺小說風格網頁解謎遊戲第一階段"
+    />
+    <title>安妮亞入學大作戰</title>
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <main class="game-shell" aria-live="polite">
+      <!-- Loading Scene：初始顯示，約 2 秒後由 main.js 切換至標題畫面。 -->
+      <section id="loading-scene" class="scene scene--loading" aria-label="載入畫面">
+        <div class="loading-content">
+          <div class="loading-star" aria-hidden="true">✦</div>
+          <p class="loading-label">正在準備潛入作戰<span class="loading-dots">...</span></p>
+        </div>
+      </section>
+
+      <!-- Title Scene：玩家完成載入後看到的入口畫面。 -->
+      <section id="title-scene" class="scene scene--title is-hidden" aria-label="標題畫面">
+        <div class="title-decoration title-decoration--left" aria-hidden="true">✦</div>
+        <div class="title-decoration title-decoration--right" aria-hidden="true">★</div>
+        <div class="title-content">
+          <p class="eyebrow">SPY x FAMILY · SECRET MISSION</p>
+          <h1>安妮亞入學大作戰</h1>
+          <p class="subtitle">優雅地解開考驗，潛入伊甸學園！</p>
+          <button id="start-button" class="start-button" type="button">
+            <span>Tap to Start</span>
+          </button>
+        </div>
+        <footer class="game-footer">
+          © Tatsuya Endo/Shueisha, SPY x FAMILY Project. 本網頁僅供教育作業展示，無商業用途。
+        </footer>
+      </section>
+
+      <!-- Dialogue Scene：第一階段只處理視覺小說對話與打字機互動。 -->
+      <section id="dialogue-scene" class="scene scene--dialogue is-hidden" aria-label="劇情對話">
+        <div class="scene-backdrop" aria-label="情境圖片佔位區">
+          <div class="backdrop-skyline" aria-hidden="true"></div>
+          <div class="placeholder-copy">EDEN ACADEMY · ENTRY EXAM</div>
+          <div class="character-placeholder" aria-label="角色立繪佔位區">角色立繪</div>
+        </div>
+
+        <!-- 對話場景的輔助功能導覽列。 -->
+        <nav class="top-right-nav" aria-label="輔助功能">
+          <button id="history-button" class="utility-button" type="button">📖 回顧對話</button>
+          <button id="hint-button" class="utility-button" type="button">💡 提示</button>
+        </nav>
+
+        <!-- 關卡互動層：根據 data.js 的 type 動態顯示 choice 或 keypad。 -->
+        <div id="interaction-layer" class="interaction-layer" aria-live="polite">
+          <div id="choice-panel" class="interaction-panel choice-panel is-hidden" aria-label="選項"></div>
+          <div id="keypad-panel" class="interaction-panel keypad-panel is-hidden" aria-label="密碼鍵盤"></div>
+        </div>
+
+        <!-- 第三關 Canvas：預設隱藏，只有進入 canvas_patrol 節點時才會啟用。 -->
+        <canvas id="gameCanvas" width="600" height="400" hidden aria-label="校園巡邏地圖"></canvas>
+        <div id="canvas-status" class="canvas-status" hidden aria-live="assertive"></div>
+
+        <div id="dialogue-box" class="dialogue-box" role="button" tabindex="0" aria-label="對話框，點擊或按空白鍵繼續">
+          <div id="avatar" class="avatar" aria-hidden="true">?</div>
+          <div class="dialogue-header">
+            <span id="speaker-name" class="speaker-name">—</span>
+            <span class="dialogue-hint">點擊或按空白鍵繼續</span>
+          </div>
+          <p id="dialogue-text" class="dialogue-text"></p>
+          <span class="continue-indicator" aria-hidden="true">▼</span>
+        </div>
+
+        <!-- 預設以 display: none 隱藏，開啟時由 main.js 加上 modal-open。 -->
+        <div id="history-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="history-modal-title">
+          <section class="modal-content history-content">
+            <div class="modal-heading">
+              <h2 id="history-modal-title">📖 對話回顧</h2>
+              <button class="modal-close-button" type="button" data-close-modal="history-modal">✖ 關閉</button>
+            </div>
+            <div id="history-list" class="history-list" aria-live="polite"></div>
+          </section>
+        </div>
+
+        <div id="hint-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="hint-modal-title">
+          <section class="modal-content hint-content">
+            <div class="modal-heading">
+              <h2 id="hint-modal-title">💡 目前關卡提示</h2>
+              <button class="modal-close-button" type="button" data-close-modal="hint-modal">✖ 關閉</button>
+            </div>
+            <p id="hint-text" class="hint-text"></p>
+          </section>
+        </div>
+      </section>
+    </main>
+
+    <script type="module" src="js/main.js"></script>
+  </body>
+</html>
