@@ -29,7 +29,24 @@ const hintText = document.querySelector("#hint-text");
 const gameCanvas = document.querySelector("#gameCanvas");
 const canvasContext = gameCanvas.getContext("2d");
 const canvasStatus = document.querySelector("#canvas-status");
+let anyaImg = new Image();
+anyaImg.src = "images/anya_sprite.png";
+anyaImg.addEventListener("load", () => {
+  if (patrolState.active) drawPatrolMap();
+});
 
+const videoTutorialModal = document.createElement("div");
+videoTutorialModal.className = "video-tutorial-modal";
+videoTutorialModal.innerHTML = `
+  <section class="video-tutorial-content" aria-label="Canvas 操作教學">
+    <video src="videos/tutorial.mp4" autoplay muted loop playsinline></video>
+    <p class="video-tutorial-text">操作說明：請先用滑鼠【左鍵點擊】選擇起始大樓。選定後用【方向鍵】移動。一旦移動即鎖定起始點！</p>
+    <button class="video-tutorial-ready" type="button">我準備好了</button>
+  </section>
+`;
+dialogueScene.append(videoTutorialModal);
+
+const videoTutorialReadyButton = videoTutorialModal.querySelector(".video-tutorial-ready");
 let currentNodeId = "start";
 let isTyping = false;
 let typingTimer = null;
@@ -39,12 +56,14 @@ let canvasStatusTimer = null;
 // 第三關巡邏狀態：第一次依需求從 B 開始；第二次失敗後依提示改從 A 開始，讓玩家能完成 Euler path。
 const patrolState = {
   active: false,
-  currentNode: "B",
-  startNode: "B",
+  currentNode: null,
+  startNode: null,
   visitedEdges: new Set(),
   failures: 0,
   inputLocked: false,
   animationFrame: null,
+  startLocked: false,
+  canPickStart: false,
 };
 
 // A、C 是左右主要大樓，B、D、E 位於中間；邊正好是題目指定的 6 條走廊。
@@ -305,15 +324,14 @@ function drawPatrolMap() {
     ctx.fillText(name, node.x, node.y);
   });
 
-  // 用小圓點與高光呈現安妮亞目前所在的節點。
-  const player = patrolNodes[patrolState.currentNode];
-  ctx.beginPath();
-  ctx.arc(player.x, player.y - 42, 10, 0, Math.PI * 2);
-  ctx.fillStyle = "#d9927b";
-  ctx.fill();
-  ctx.strokeStyle = "#fdfbf7";
-  ctx.lineWidth = 3;
-  ctx.stroke();
+ 
+    // 用圖片呈現安妮亞目前所在的節點；尚未選起點時不顯示角色。
+  if (patrolState.currentNode) {
+    const player = patrolNodes[patrolState.currentNode];
+    if (anyaImg.complete && anyaImg.naturalWidth > 0) {
+      ctx.drawImage(anyaImg, player.x - 24, player.y - 70, 48, 48);
+    }
+  }
 }
 
 function patrolLoop() {
@@ -322,13 +340,50 @@ function patrolLoop() {
   patrolState.animationFrame = window.requestAnimationFrame(patrolLoop);
 }
 
-function resetPatrolState(startNode = patrolState.startNode) {
+function resetPatrolState(startNode = null) {
   patrolState.currentNode = startNode;
+  patrolState.startNode = startNode;
+  patrolState.startLocked = false;
+  patrolState.canPickStart = true;
   patrolState.visitedEdges.clear();
   patrolState.inputLocked = false;
   drawPatrolMap();
 }
+function openVideoTutorial() {
+  patrolState.canPickStart = false;
+  videoTutorialModal.classList.add("modal-open");
+}
 
+function closeVideoTutorial() {
+  videoTutorialModal.classList.remove("modal-open");
+  patrolState.canPickStart = true;
+}
+
+function getCanvasPoint(event) {
+  const rect = gameCanvas.getBoundingClientRect();
+  return {
+    x: ((event.clientX - rect.left) / rect.width) * gameCanvas.width,
+    y: ((event.clientY - rect.top) / rect.height) * gameCanvas.height,
+  };
+}
+
+function getClickedPatrolNode(event) {
+  const point = getCanvasPoint(event);
+  return Object.entries(patrolNodes).find(([, node]) => {
+    return Math.hypot(point.x - node.x, point.y - node.y) <= 34;
+  })?.[0] || null;
+}
+
+function handleCanvasClick(event) {
+  if (!patrolState.active || !patrolState.canPickStart || patrolState.startLocked) return;
+
+  const nodeName = getClickedPatrolNode(event);
+  if (!nodeName) return;
+
+  patrolState.currentNode = nodeName;
+  patrolState.startNode = nodeName;
+  drawPatrolMap();
+}
 function showCanvasStatus(message, duration = 1000) {
   window.clearTimeout(canvasStatusTimer);
   canvasStatus.textContent = message;
@@ -358,16 +413,10 @@ function failPatrol() {
   showCanvasStatus("被野狗追上了！", 1300);
 
   window.setTimeout(() => {
-    // B 是初始位置；第二次失敗後依提示從唯一可完成 Euler path 的奇數度數節點 A 重試。
-    const retryNode = patrolState.failures >= 2 ? "A" : "B";
-    patrolState.startNode = retryNode;
-    resetPatrolState(retryNode);
-    if (patrolState.failures >= 2) {
-      openHintModal("長得像『單數邊』的是調皮妖怪，要從有 3 條路的 A 大樓出發喔！");
-    }
+    resetPatrolState(null);
+    openHintModal("路線卡住了！請重新用滑鼠選擇起始大樓，再試著一次走完所有走廊。");
   }, 1300);
 }
-
 function winPatrol() {
   stopPatrol();
   dialogueBox.hidden = false;
@@ -394,6 +443,15 @@ function getNodeByDirection(direction) {
 
 function handlePatrolKey(event) {
   if (!patrolState.active || patrolState.inputLocked) return;
+
+  if (!patrolState.currentNode) {
+    if (event.key.startsWith("Arrow")) {
+      event.preventDefault();
+      showCanvasStatus("請先用滑鼠左鍵選擇起始大樓！");
+    }
+    return;
+  }
+
   const targetNode = getNodeByDirection(event.key);
   if (!targetNode) return;
   event.preventDefault();
@@ -403,6 +461,19 @@ function handlePatrolKey(event) {
     showCanvasStatus("這裡已經巡邏過了！");
     return;
   }
+
+  patrolState.startLocked = true;
+  patrolState.canPickStart = false;
+  patrolState.visitedEdges.add(key);
+  patrolState.currentNode = targetNode;
+  drawPatrolMap();
+
+  if (patrolState.visitedEdges.size === patrolEdges.length) {
+    winPatrol();
+    return;
+  }
+  if (getNeighbors(patrolState.currentNode, true).length === 0) failPatrol();
+}
 
   patrolState.visitedEdges.add(key);
   patrolState.currentNode = targetNode;
@@ -421,8 +492,9 @@ function startPatrol() {
   gameCanvas.hidden = false;
   gameCanvas.classList.add("is-visible");
   patrolState.active = true;
-  resetPatrolState(patrolState.startNode);
+  resetPatrolState(null);
   patrolLoop();
+  openVideoTutorial();
 }
 
 // ---------- 劇情節點與一般互動 ----------
@@ -482,6 +554,8 @@ startButton.addEventListener("click", () => {
 });
 
 dialogueBox.addEventListener("click", advanceDialogue);
+videoTutorialReadyButton.addEventListener("click", closeVideoTutorial);
+gameCanvas.addEventListener("click", handleCanvasClick);
 
 historyButton.addEventListener("click", () => {
   renderDialogueHistory();
