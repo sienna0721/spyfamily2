@@ -16,7 +16,7 @@ export const dialogues = [
       { text: "因為一年只有 12 個月，13 人分進 12 個月，一定會有月份重複。", next: "q1_correct" },
       { text: "因為 13 除以 2 等於 6 餘 1，所以絕對有兩個人同一天生日。", next: "q1_wrong_math" },
       { text: "因為一年有四個季節，13 個人平均分配，一定會有人同月份。", next: "q1_wrong_season" },
-    ],
+    ]
   },
   { id: "q1_wrong_math", type: "dialogue", speaker: "洛伊德", avatarColor: "#a3c9c7", text: "安妮亞，題目問的是『同一個月份』，除以 2 算出來的餘數並不能證明月份重複喔。想想看一年總共有幾個月？", next: "q1_choice" },
   { id: "q1_wrong_season", type: "dialogue", speaker: "洛伊德", avatarColor: "#a3c9c7", text: "分進四個季節，只能證明『有人同一個季節』，但一個季節有三個月，不一定會同月份。我們換個『籠子』來裝裝看？", next: "q1_choice" },
@@ -36,9 +36,22 @@ export const dialogues = [
     hintText: "💡 提示：如果洛伊德拿到 2 或 3，因為有 28 或 39 這兩個不重複的個位數，安妮亞拿到 8 或 9 就能馬上通關。但他確定安妮亞不知道，代表他手上的十位數排除了 2 跟 3 喔！",
   },
   { id: "q2_wrong", type: "dialogue", speaker: "洛伊德", avatarColor: "#a3c9c7", text: "不對。如果我拿到 2 或 3，可能會有不重複的 8 或 9 讓安妮亞秒答。所以我手上的數字排除了 2 跟 3 喔！", next: "q2_keypad" },
+
+  // 🔽 新增：密碼盤錯兩次時觸發的專屬劇情分歧
+  { id: "q2_subtle_hint", type: "dialogue", speaker: "洛伊德", avatarColor: "#a3c9c7", text: "（心想：安妮亞看起來有點苦惱。這題需要排除法，她可能卡在某個邏輯死角了。）", next: "q2_hint_ask" },
+  { id: "q2_hint_ask", type: "dialogue", speaker: "洛伊德", avatarColor: "#a3c9c7", text: "安妮亞，妳的表情告訴我妳遇到了困難。是卡在「父親拿到的十位數」，還是「妳手上的個位數」呢？", next: "q2_hint_choice" },
+  { id: "q2_hint_choice", type: "choice", options: [
+      { text: "為什麼父親一開始確定安妮亞不知道？", next: "q2_hint_albert" },
+      { text: "安妮亞後來是怎麼突然知道的？", next: "q2_hint_bernard" }
+    ]
+  },
+  { id: "q2_hint_albert", type: "dialogue", speaker: "洛伊德", avatarColor: "#a3c9c7", text: "如果我手上的十位數，搭配的個位數裡有「唯一不重複的數字」（例如 28 的 8，39 的 9），我就不敢這麼肯定了。試著先把不可能的十位數劃掉吧。", next: "q2_keypad" },
+  { id: "q2_hint_bernard", type: "dialogue", speaker: "洛伊德", avatarColor: "#a3c9c7", text: "原本妳只有個位數，無法確定密碼。但聽完我的話，排除了包含 8 跟 9 的十位數後，剩下的選項中，妳的個位數肯定沒有重複了。", next: "q2_keypad" },
+  // 🔼 新增結束
+
   { id: "q2_correct", type: "dialogue", speaker: "安妮亞", avatarColor: "#f8c6b5", text: "答案是 17！", next: "q2_correct_2" },
   { id: "q2_correct_2", type: "dialogue", speaker: "亨利老師", avatarColor: "#a8d8b9", text: "（心想：太優雅了！這兩人成功破解！）", next: "q3_1" },
-
+  
   // --- 第三關：校園巡邏 ---
   { id: "q3_1", type: "dialogue", speaker: "亨利老師", avatarColor: "#a8d8b9", text: "第三題。請看這張校園地圖，有 5 棟大樓與 6 條走廊。", next: "q3_2" },
   { id: "q3_2", type: "dialogue", speaker: "亨利老師", avatarColor: "#a8d8b9", text: "巡邏員必須<b>不重複</b>走過任何一條走廊，但必須<b>巡視完所有走廊</b>。請試著優雅地走完全程吧！", next: "q3_canvas" },
@@ -46,13 +59,3 @@ export const dialogues = [
   { id: "q3_correct", type: "dialogue", speaker: "亨利老師", avatarColor: "#a8d8b9", text: "優秀！利用頂點度數的奇偶性來決定起終點，這真是一場精彩無比的配合！", next: "end" },
   { id: "end", type: "dialogue", speaker: "系統", avatarColor: "#ccc", text: "（第三關測試完畢，等待最終關卡）", next: null },
 ];
-  { id: "q2_subtle_hint", type: "dialogue", speaker: "洛伊德", avatarColor: "#a3c9c7", text: "（心想：安妮亞看起來有點苦惱。這題需要排除法，她可能卡在某個邏輯死角了。）", next: "q2_hint_ask" },
-  { id: "q2_hint_ask", type: "dialogue", speaker: "洛伊德", avatarColor: "#a3c9c7", text: "安妮亞，妳的表情告訴我妳遇到了困難。是卡在「艾伯特說的話」，還是「貝納德說的話」呢？", next: "q2_hint_choice" },
-  { id: "q2_hint_choice", type: "choice", options: [
-      { text: "為什麼艾伯特確定貝納德不知道？", next: "q2_hint_albert" },
-      { text: "貝納德是怎麼突然知道的？", next: "q2_hint_bernard" },
-    ]
-  },
-  { id: "q2_hint_albert", type: "dialogue", speaker: "洛伊德", avatarColor: "#a3c9c7", text: "如果艾伯特手上的月份，包含了一個「只有唯一日期的日子」（例如 18 或 19），他就不敢這麼肯定了。試著把不可能的月份劃掉吧。", next: "q2_choice" },
-  { id: "q2_hint_bernard", type: "dialogue", speaker: "洛伊德", avatarColor: "#a3c9c7", text: "原本貝納德只有日期，無法確定。但聽完艾伯特的話，排除了某些月份後，剩下的選項中，他的日期肯定沒有重複了。", next: "q2_choice" },
-
