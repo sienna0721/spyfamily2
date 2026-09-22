@@ -35,7 +35,8 @@ export const dialogues = [
     nextWrong: "q2_wrong",
     hintText: "💡 提示：如果洛伊德拿到 2 或 3，因為有 28 或 39 這兩個不重複的個位數，安妮亞拿到 8 或 9 就能馬上通關。但他確定安妮亞不知道，代表他手上的十位數排除了 2 跟 3 喔！",
   },
-  { id: "q2_wrong", type: "dialogue", speaker: "洛伊德", avatarColor: "#a3c9c7", text: "不對。如果我拿到 2 或 3，可能會有不重複的 8 或 9 讓安妮亞秒答。所以我手上的數字排除了 2 跟 3 喔！", next: "q2_keypad" },
+  { id: "q2_wrong", type: "dialogue", speaker: "洛伊德", avatarColor: "#a3c9c7", text: "密碼不對喔。冷靜下來想想，當我說出『我確定安妮亞不知道』的時候，其實就已經幫妳刪掉好幾個不可能的選項了。", next: "q2_keypad" },
+
 
    // 🔽 密碼盤錯兩次時觸發的蘇格拉底式引導
   { id: "q2_subtle_hint", type: "dialogue", speaker: "洛伊德", avatarColor: "#a3c9c7", text: "看來我們需要一點提示。想想看，安妮亞是怎麼在聽完我的話之後，突然就知道密碼了呢？", next: "q2_hint_step1" },
