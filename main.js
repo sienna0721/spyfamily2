@@ -3,9 +3,9 @@ import { dialogues } from "./data.js";
 // 將資料陣列轉成 Map，之後可用 id 快速找到下一個劇情節點。
 const dialogueMap = new Map(dialogues.map((dialogue) => [dialogue.id, dialogue]));
 
-// 全域對話歷史與第一關答題統計。
+// 全域對話歷史與第一、第二關答題統計。
 let dialogueHistory = [];
-let playerStats = { q1Mistakes: 0 };
+let playerStats = { q1Mistakes: 0, q2Mistakes: 0 };
 
 // 場景與一般 UI 元素。
 const loadingScene = document.querySelector("#loading-scene");
@@ -40,8 +40,7 @@ const videoTutorialModal = document.createElement("div");
 videoTutorialModal.className = "video-tutorial-modal";
 videoTutorialModal.innerHTML = `
   <section class="video-tutorial-content" aria-label="Canvas 操作教學">
-    <video src="videos/tutorial.mp4" autoplay muted loop playsinline></video>
-    <p class="video-tutorial-text">操作說明：請先用滑鼠【左鍵點擊】選擇起始大樓。選定後用【方向鍵】移動。一旦移動即鎖定起始點！</p>
+    <p class="video-tutorial-text" style="margin-top: 10px;">操作說明：<br>請先用滑鼠【左鍵點擊】選擇起始大樓。<br>選定後用【方向鍵】移動。<br>注意：一旦移動即鎖定起始點！</p>
     <button class="video-tutorial-ready" type="button">我準備好了</button>
   </section>
 `;
@@ -192,8 +191,8 @@ function openHintModal(customText = null) {
   openModal(hintModal);
 }
 
-/** 第一關錯誤時更新 q1Mistakes；第二次錯誤先播放一段強制提醒。 */
 function handleChoice(option) {
+  // 第一關（鴿籠定理）錯誤兩次觸發強制提醒
   if (currentNodeId === "q1_choice" && option.next !== "q1_correct") {
     playerStats.q1Mistakes += 1;
     if (playerStats.q1Mistakes === 2) {
@@ -208,6 +207,17 @@ function handleChoice(option) {
       return;
     }
   }
+
+  // 第二關（猜生日）錯誤兩次觸發分支對話引導
+  if (currentNodeId === "q2_choice" && option.next !== "q2_correct") {
+    playerStats.q2Mistakes += 1;
+    if (playerStats.q2Mistakes === 2) {
+      hideInteractionPanels();
+      showNode("q2_subtle_hint"); 
+      return;
+    }
+  }
+
   showNode(option.next);
 }
 
@@ -312,13 +322,19 @@ function drawPatrolMap() {
     ctx.strokeStyle = "rgba(91, 89, 96, .55)";
     ctx.lineWidth = 2;
     ctx.stroke();
+    
+    // 強化當前所在位置的標示（發光與加粗外框）
     if (name === patrolState.currentNode) {
+      ctx.shadowColor = "#f8e4a8";
+      ctx.shadowBlur = 15;
       ctx.beginPath();
-      ctx.arc(node.x, node.y, 34, 0, Math.PI * 2);
-      ctx.strokeStyle = "rgba(217, 201, 232, .9)";
-      ctx.lineWidth = 3;
+      ctx.arc(node.x, node.y, 36, 0, Math.PI * 2);
+      ctx.strokeStyle = "#fdfbf7";
+      ctx.lineWidth = 5;
       ctx.stroke();
+      ctx.shadowBlur = 0;
     }
+    
     ctx.fillStyle = "#5b5960";
     ctx.font = "800 22px Nunito, sans-serif";
     ctx.textAlign = "center";
@@ -392,7 +408,6 @@ function showCanvasStatus(message, duration = 1000) {
   canvasStatus.textContent = message;
   canvasStatus.hidden = false;
   canvasStatus.classList.remove("is-visible");
-  // 強制重新計算動畫起點，讓連續警告也能重新淡入。
   void canvasStatus.offsetWidth;
   canvasStatus.classList.add("is-visible");
   canvasStatusTimer = window.setTimeout(() => {
@@ -432,7 +447,6 @@ function getNodeByDirection(direction) {
   if (!vector) return null;
 
   const current = patrolNodes[patrolState.currentNode];
-  // 先包含已巡邏邊，讓玩家再次按到同一方向時能得到明確警告。
   return getNeighbors(patrolState.currentNode)
     .map((name) => {
       const target = patrolNodes[name];
@@ -583,3 +597,4 @@ window.addEventListener("keydown", (event) => {
     advanceDialogue();
   }
 });
+
