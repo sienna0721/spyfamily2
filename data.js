@@ -37,17 +37,20 @@ export const dialogues = [
   },
   { id: "q2_wrong", type: "dialogue", speaker: "洛伊德", avatarColor: "#a3c9c7", text: "不對。如果我拿到 2 或 3，可能會有不重複的 8 或 9 讓安妮亞秒答。所以我手上的數字排除了 2 跟 3 喔！", next: "q2_keypad" },
 
-  // 🔽 新增：密碼盤錯兩次時觸發的專屬劇情分歧
-  { id: "q2_subtle_hint", type: "dialogue", speaker: "洛伊德", avatarColor: "#a3c9c7", text: "（心想：安妮亞看起來有點苦惱。這題需要排除法，她可能卡在某個邏輯死角了。）", next: "q2_hint_ask" },
-  { id: "q2_hint_ask", type: "dialogue", speaker: "洛伊德", avatarColor: "#a3c9c7", text: "安妮亞，妳的表情告訴我妳遇到了困難。是卡在「父親拿到的十位數」，還是「妳手上的個位數」呢？", next: "q2_hint_choice" },
+   // 🔽 密碼盤錯兩次時觸發的蘇格拉底式引導
+  { id: "q2_subtle_hint", type: "dialogue", speaker: "洛伊德", avatarColor: "#a3c9c7", text: "看來我們需要一點提示。想想看，安妮亞是怎麼在聽完我的話之後，突然就知道密碼了呢？", next: "q2_hint_step1" },
+  { id: "q2_hint_step1", type: "dialogue", speaker: "安妮亞", avatarColor: "#f8c6b5", text: "因為父親非常肯定安妮亞不知道！", next: "q2_hint_step2" },
+  { id: "q2_hint_step2", type: "dialogue", speaker: "洛伊德", avatarColor: "#a3c9c7", text: "沒錯。如果我的十位數是 2 或 3，妳有可能拿到獨一無二的 8 或 9，我就不敢這麼肯定了。所以，我的十位數只可能是...？", next: "q2_hint_choice" },
   { id: "q2_hint_choice", type: "choice", options: [
-      { text: "為什麼父親一開始確定安妮亞不知道？", next: "q2_hint_albert" },
-      { text: "安妮亞後來是怎麼突然知道的？", next: "q2_hint_bernard" }
+      { text: "只可能是 1", next: "q2_hint_step3" },
+      { text: "可能是 2 或 3", next: "q2_hint_wrong" }
     ]
   },
-  { id: "q2_hint_albert", type: "dialogue", speaker: "洛伊德", avatarColor: "#a3c9c7", text: "如果我手上的十位數，搭配的個位數裡有「唯一不重複的數字」（例如 28 的 8，39 的 9），我就不敢這麼肯定了。試著先把不可能的十位數劃掉吧。", next: "q2_keypad" },
-  { id: "q2_hint_bernard", type: "dialogue", speaker: "洛伊德", avatarColor: "#a3c9c7", text: "原本妳只有個位數，無法確定密碼。但聽完我的話，排除了包含 8 跟 9 的十位數後，剩下的選項中，妳的個位數肯定沒有重複了。", next: "q2_keypad" },
+  { id: "q2_hint_wrong", type: "dialogue", speaker: "洛伊德", avatarColor: "#a3c9c7", text: "不對喔。如果我拿 2，保險箱可能是 28，萬一安妮亞剛好拿到 8 她就秒答了。為了讓我『絕對肯定』她不知道，我手上絕對沒有 2 和 3。", next: "q2_hint_choice" },
+  { id: "q2_hint_step3", type: "dialogue", speaker: "洛伊德", avatarColor: "#a3c9c7", text: "完全正確，十位數是 1，密碼只剩下 14 與 17。安妮亞，妳是因為看著手上的個位數，才知道最終答案的對吧？", next: "q2_hint_step4" },
+  { id: "q2_hint_step4", type: "dialogue", speaker: "安妮亞", avatarColor: "#f8c6b5", text: "（小聲對玩家說）沒錯！因為安妮亞手上的數字是 7 喔！快幫我輸入吧！", next: "q2_keypad" },
   // 🔼 新增結束
+
 
   { id: "q2_correct", type: "dialogue", speaker: "安妮亞", avatarColor: "#f8c6b5", text: "答案是 17！", next: "q2_correct_2" },
   { id: "q2_correct_2", type: "dialogue", speaker: "亨利老師", avatarColor: "#a8d8b9", text: "（心想：太優雅了！這兩人成功破解！）", next: "q3_1" },
