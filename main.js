@@ -3,7 +3,7 @@ import { dialogues } from "./data.js";
 // 將資料陣列轉成 Map，之後可用 id 快速找到下一個劇情節點。
 const dialogueMap = new Map(dialogues.map((dialogue) => [dialogue.id, dialogue]));
 
-// 全域對話歷史與第一、第二關答題統計。
+// 全域對話歷史與答題統計（新增 q2Mistakes 追蹤第二關）。
 let dialogueHistory = [];
 let playerStats = { q1Mistakes: 0, q2Mistakes: 0 };
 
@@ -36,6 +36,7 @@ anyaImg.addEventListener("load", () => {
   if (patrolState.active) drawPatrolMap();
 });
 
+// 純文字版的教學提示框
 const videoTutorialModal = document.createElement("div");
 videoTutorialModal.className = "video-tutorial-modal";
 videoTutorialModal.innerHTML = `
@@ -54,7 +55,7 @@ let typingTimer = null;
 let pendingAfterReminder = null;
 let canvasStatusTimer = null;
 
-// 第三關巡邏狀態：加入鎖定機制與自訂起點判定
+// 第三關巡邏狀態
 const patrolState = {
   active: false,
   currentNode: null,
@@ -67,7 +68,7 @@ const patrolState = {
   canPickStart: false,
 };
 
-// A、C 是左右主要大樓，B、D、E 位於中間；邊正好是題目指定的 6 條走廊。
+// A、C 是左右主要大樓，B、D、E 位於中間。
 const patrolNodes = {
   A: { x: 96, y: 200, color: "#f8c6b5" },
   B: { x: 300, y: 96, color: "#a8d8b9" },
@@ -96,7 +97,6 @@ function updateCharacter(dialogue) {
   avatar.style.backgroundColor = dialogue.avatarColor || "#cccccc";
 }
 
-/** 將文字轉成安全的 HTML；只有資料中的 b/strong 會被轉成粗體標籤。 */
 function dialogueToHtml(text) {
   const tokens = [];
   const boldPattern = /<(b|strong)>([\s\S]*?)<\/\1>/gi;
@@ -119,10 +119,6 @@ function dialogueToHtml(text) {
   return tokens;
 }
 
-/**
- * 逐字播放文字。粗體片段會被當作一個完整 token 一次加入，
- * 因此玩家不會看到 <b>、<strong> 等標籤字元逐字跑出來。
- */
 function startTypewriter(dialogue) {
   window.clearTimeout(typingTimer);
   isTyping = true;
@@ -141,7 +137,6 @@ function startTypewriter(dialogue) {
       return;
     }
 
-    // 一般文字每次加入一個字；粗體文字整段加入，保留 HTML 顯示效果。
     if (token.isBold) {
       renderedHtml += token.html;
       tokenIndex += 1;
@@ -192,7 +187,7 @@ function openHintModal(customText = null) {
 }
 
 function handleChoice(option) {
-  // 第一關（鴿籠定理）錯誤兩次觸發強制提醒
+  // 第一關（鴿籠定理）錯誤判定
   if (currentNodeId === "q1_choice" && option.next !== "q1_correct") {
     playerStats.q1Mistakes += 1;
     if (playerStats.q1Mistakes === 2) {
@@ -207,17 +202,6 @@ function handleChoice(option) {
       return;
     }
   }
-
-  // 第二關（猜生日）錯誤兩次觸發分支對話引導
-  if (currentNodeId === "q2_choice" && option.next !== "q2_correct") {
-    playerStats.q2Mistakes += 1;
-    if (playerStats.q2Mistakes === 2) {
-      hideInteractionPanels();
-      showNode("q2_subtle_hint"); 
-      return;
-    }
-  }
-
   showNode(option.next);
 }
 
@@ -235,8 +219,8 @@ function renderChoice(node) {
   choicePanel.classList.remove("is-hidden");
 }
 
-/** 第一次進入才建立鍵盤，之後回到節點時保留錯誤按鈕的 disabled-btn 狀態。 */
 function renderKeypad(node) {
+  // 狀態保留：若密碼盤已建立，直接顯示，保留按錯的按鈕狀態
   if (keypadPanel.querySelector(".keypad-button")) {
     keypadPanel.classList.remove("is-hidden");
     return;
@@ -257,13 +241,26 @@ function renderKeypad(node) {
     button.textContent = number;
     button.dataset.number = String(number);
     button.setAttribute("aria-label", `密碼 ${number}`);
+    
     button.addEventListener("click", () => {
       if (number === node.correct) {
         showNode(node.nextCorrect);
         return;
       }
+      
       button.classList.add("disabled-btn");
       button.disabled = true;
+
+      // 第二關（猜生日密碼盤）錯誤判定
+      if (node.id === "q2_keypad") {
+        playerStats.q2Mistakes += 1;
+        if (playerStats.q2Mistakes === 2) {
+          hideInteractionPanels();
+          showNode("q2_subtle_hint"); // 轉交給 data.js 中的劇情處理
+          return;
+        }
+      }
+
       showNode(node.nextWrong);
     });
     grid.append(button);
@@ -289,7 +286,6 @@ function drawPatrolMap() {
   ctx.fillStyle = "#cfe8dd";
   ctx.fillRect(0, 0, gameCanvas.width, gameCanvas.height);
 
-  // 柔和格線讓 Canvas 保持繪本地圖的紙張感。
   ctx.strokeStyle = "rgba(91, 89, 96, .08)";
   ctx.lineWidth = 1;
   for (let x = 0; x <= gameCanvas.width; x += 30) {
@@ -299,7 +295,6 @@ function drawPatrolMap() {
     ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(gameCanvas.width, y); ctx.stroke();
   }
 
-  // 未巡邏走廊使用淺色虛線，已巡邏走廊改成粉彩橘實線。
   patrolEdges.forEach(([first, second]) => {
     const start = patrolNodes[first];
     const end = patrolNodes[second];
@@ -342,7 +337,6 @@ function drawPatrolMap() {
     ctx.fillText(name, node.x, node.y);
   });
 
-  // 用圖片呈現安妮亞目前所在的節點；尚未選起點時不顯示角色。
   if (patrolState.currentNode) {
     const player = patrolNodes[patrolState.currentNode];
     if (anyaImg.complete && anyaImg.naturalWidth > 0) {
@@ -552,7 +546,7 @@ function advanceDialogue() {
   if (currentNode.next) showNode(currentNode.next);
 }
 
-// Loading Scene 與既有過場時間維持不變。
+// Loading Scene 
 window.setTimeout(() => switchScene(loadingScene, titleScene), 2000);
 
 startButton.addEventListener("click", () => {
