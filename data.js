@@ -46,3 +46,13 @@ export const dialogues = [
   { id: "q3_correct", type: "dialogue", speaker: "亨利老師", avatarColor: "#a8d8b9", text: "優秀！利用頂點度數的奇偶性來決定起終點，這真是一場精彩無比的配合！", next: "end" },
   { id: "end", type: "dialogue", speaker: "系統", avatarColor: "#ccc", text: "（第三關測試完畢，等待最終關卡）", next: null },
 ];
+  { id: "q2_subtle_hint", type: "dialogue", speaker: "洛伊德", avatarColor: "#a3c9c7", text: "（心想：安妮亞看起來有點苦惱。這題需要排除法，她可能卡在某個邏輯死角了。）", next: "q2_hint_ask" },
+  { id: "q2_hint_ask", type: "dialogue", speaker: "洛伊德", avatarColor: "#a3c9c7", text: "安妮亞，妳的表情告訴我妳遇到了困難。是卡在「艾伯特說的話」，還是「貝納德說的話」呢？", next: "q2_hint_choice" },
+  { id: "q2_hint_choice", type: "choice", options: [
+      { text: "為什麼艾伯特確定貝納德不知道？", next: "q2_hint_albert" },
+      { text: "貝納德是怎麼突然知道的？", next: "q2_hint_bernard" }
+    ]
+  },
+  { id: "q2_hint_albert", type: "dialogue", speaker: "洛伊德", avatarColor: "#a3c9c7", text: "如果艾伯特手上的月份，包含了一個「只有唯一日期的日子」（例如 18 或 19），他就不敢這麼肯定了。試著把不可能的月份劃掉吧。", next: "q2_choice" },
+  { id: "q2_hint_bernard", type: "dialogue", speaker: "洛伊德", avatarColor: "#a3c9c7", text: "原本貝納德只有日期，無法確定。但聽完艾伯特的話，排除了某些月份後，剩下的選項中，他的日期肯定沒有重複了。", next: "q2_choice" },
+
