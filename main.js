@@ -223,7 +223,7 @@ function renderChoice(node) {
     button.type = "button";
     button.className = "choice-button";
     button.textContent = option.text;
-    button.setAttribute("aria-label", `選項 ${index + 1}：${option.text}`);
+    button.setAttribute("aria-label", `選項 index+1：{option.text}`);
     button.addEventListener("click", () => handleChoice(option));
     choicePanel.append(button);
   });
@@ -663,4 +663,52 @@ function advanceDialogue() {
     dialogueText.innerHTML = dialogueToHtml(currentNode.text).map((token) => token.html).join("");
     return;
   }
-  if (currentNode.next) showNode(currentNode.
+  if (currentNode.next) showNode(currentNode.next);
+}
+
+// Loading Scene 
+window.setTimeout(() => switchScene(loadingScene, titleScene), 2000);
+
+startButton.addEventListener("click", () => {
+  switchScene(titleScene, dialogueScene);
+  showNode("start");
+});
+
+dialogueBox.addEventListener("click", advanceDialogue);
+videoTutorialReadyButton.addEventListener("click", closeVideoTutorial);
+gameCanvas.addEventListener("click", handleCanvasClick);
+
+historyButton.addEventListener("click", () => {
+  renderDialogueHistory();
+  openModal(historyModal);
+});
+hintButton.addEventListener("click", () => openHintModal());
+
+document.querySelectorAll("[data-close-modal]").forEach((button) => {
+  button.addEventListener("click", () => closeModal(document.querySelector(`#${button.dataset.closeModal}`)));
+});
+
+[historyModal, hintModal].forEach((modal) => {
+  modal.addEventListener("click", (event) => {
+    if (event.target === modal) closeModal(modal);
+  });
+});
+
+window.addEventListener("keydown", (event) => {
+  if (patrolState.active) {
+    handlePatrolKey(event);
+    return;
+  }
+
+  if (event.code === "Escape") {
+    closeModal(historyModal);
+    closeModal(hintModal);
+    return;
+  }
+  if ((event.code === "Space" || event.code === "Enter") && !dialogueScene.classList.contains("is-hidden")) {
+    if (historyModal.classList.contains("modal-open") || hintModal.classList.contains("modal-open")) return;
+    event.preventDefault();
+    advanceDialogue();
+  }
+});
+
