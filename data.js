@@ -60,6 +60,50 @@ export const dialogues = [
   { id: "q3_1", type: "dialogue", speaker: "亨利老師", avatarColor: "#a8d8b9", text: "第三題。請看這張校園地圖，有 5 棟大樓與 6 條走廊。", next: "q3_2" },
   { id: "q3_2", type: "dialogue", speaker: "亨利老師", avatarColor: "#a8d8b9", text: "巡邏員必須<b>不重複</b>走過任何一條走廊，但必須<b>巡視完所有走廊</b>。請試著優雅地走完全程吧！", next: "q3_canvas" },
   { id: "q3_canvas", type: "canvas_patrol", nextCorrect: "q3_correct" },
-  { id: "q3_correct", type: "dialogue", speaker: "亨利老師", avatarColor: "#a8d8b9", text: "優秀！利用頂點度數的奇偶性來決定起終點，這真是一場精彩無比的配合！", next: "end" },
-  { id: "end", type: "dialogue", speaker: "系統", avatarColor: "#ccc", text: "（第三關測試完畢，等待最終關卡）", next: null },
+  { id: "q3_correct", type: "dialogue", speaker: "亨利老師", avatarColor: "#a8d8b9", text: "優秀！利用頂點度數的奇偶性來決定起終點，這真是一場精彩無比的配合！", next: "q4_1" },
+    // --- 第四關：最後的大門 ---
+  { id: "q4_1", type: "dialogue", speaker: "亨利老師", avatarColor: "#a8d8b9", text: "你們一家人的表現真的非常出色，我很想讓你們馬上通過，不過按照規定，還是得要你們通過最後一關才能錄取。", next: "q4_2" },
+  { id: "q4_2", type: "dialogue", speaker: "亨利老師", avatarColor: "#a8d8b9", text: "那麼，請跟我來。", next: "q4_3" },
+  { id: "q4_3", type: "dialogue", speaker: "系統", avatarColor: "#ccc", text: "亨利老師帶著佛傑一家來到一扇鐵門前。大門上似乎有幾個引人注目的東西……", next: "q4_investigate" },
+
+  {
+    id: "q4_investigate",
+    type: "investigation",
+    items: [
+      { id: "sign", label: "⚠️ 警告標語", top: "70%", left: "20%", next: "q4_sign" },
+      { id: "star", label: "⭐", top: "25%", left: "75%", next: "q4_star_1" },
+      { id: "keypad", label: "KFRNQD", top: "50%", left: "50%", next: "q4_keypad_intro" },
+    ],
+  },
+
+  { id: "q4_sign", type: "dialogue", speaker: "洛伊德", avatarColor: "#a3c9c7", text: "『僅限輸入一次，錯誤即刻淘汰』……看來不能隨便用窮舉法亂猜，必須找到確切的密鑰。", next: "q4_investigate" },
+
+  { id: "q4_star_1", type: "dialogue", speaker: "安妮亞", avatarColor: "#f8c6b5", text: "父親大人！你看門上那個星星！跟安妮亞想要拿到的『星星』長的一樣！", next: "q4_star_2" },
+  { id: "q4_star_2", type: "dialogue", speaker: "安妮亞", avatarColor: "#f8c6b5", text: "安妮亞數過好多次了，那個星星有 5 個尖角喔！", next: "q4_star_3" },
+  { id: "q4_star_3", type: "dialogue", speaker: "洛伊德", avatarColor: "#a3c9c7", text: "星星的 5 個角？……難道亨利老師把密鑰直接藏在視覺圖像裡了？", next: "q4_star_4" },
+  { id: "q4_star_4", type: "dialogue", speaker: "洛伊德", avatarColor: "#a3c9c7", text: "好，安妮亞，我們就用妳發現的『5』來試試看！把這串字母全部往前推算 5 個字母……", next: "q4_star_5" },
+  { id: "q4_star_5", type: "dialogue", speaker: "洛伊德", avatarColor: "#a3c9c7", text: "K 往前 5 格是 F，F 往前 5 格是 A，R 往前 5 格是 M，N 往前 5 格是 I，Q 往前 5 格是 L，D 往前 5 格是……", next: "q4_star_6" },
+  { id: "q4_star_6", type: "dialogue", speaker: "安妮亞", avatarColor: "#f8c6b5", text: "（露出疑惑的表情）", next: "q4_star_7" },
+  { id: "q4_star_7", type: "dialogue", speaker: "洛伊德", avatarColor: "#a3c9c7", text: "注意到了嗎？推到 A 之後要從 Z 繼續倒數，所以是 C、B、A、Z、Y！", next: "q4_star_8" },
+  { id: "q4_star_8", type: "dialogue", speaker: "安妮亞", avatarColor: "#f8c6b5", text: "答案是 <b>FAMILY</b>！", next: "q4_investigate" },
+
+  { id: "q4_keypad_intro", type: "dialogue", speaker: "洛伊德", avatarColor: "#a3c9c7", text: "這是凱撒加密法。將原本的英文字母往後平移替換。我現在必須輸入確切的密碼，才能把門打開。", next: "q4_keypad" },
+
+  {
+    id: "q4_keypad",
+    type: "password_keypad",
+    correct: "FAMILY",
+    nextCorrect: "q4_correct",
+    nextWrong: "q4_wrong",
+  },
+
+  { id: "q4_wrong", type: "dialogue", speaker: "系統", avatarColor: "#ccc", text: "【警告：密碼錯誤，防盜機制啟動。】", next: "q4_wrong_2" },
+  { id: "q4_wrong_2", type: "dialogue", speaker: "洛伊德", avatarColor: "#a3c9c7", text: "等等，剛剛輸入太快按錯了，這是最後一次機會，必須精準輸入 F-A-M-I-L-Y！", next: "q4_keypad" },
+
+  { id: "q4_correct", type: "dialogue", speaker: "系統", avatarColor: "#ccc", text: "<img src='images/15727.jpg' class='success-image' alt='解鎖成功介面'><br>【系統廣播：密碼輸入正確，鎖舌已解除，請轉動手輪開啟大門。】", next: "q4_end_1" },
+  { id: "q4_end_1", type: "dialogue", speaker: "洛伊德", avatarColor: "#a3c9c7", text: "太好了，密碼正確！接下來只要轉動這個把手……（用力轉動）……嗯？", next: "q4_end_2" },
+  { id: "q4_end_2", type: "dialogue", speaker: "洛伊德", avatarColor: "#a3c9c7", text: "咕！可惡，這扇門太久沒開，裡面的轉軸完全生鏽卡死了，一個人根本轉不動！", next: "q4_end_3" },
+  { id: "q4_end_3", type: "dialogue", speaker: "約兒", avatarColor: "#d9c9e8", text: "洛伊德先生，請讓我也來幫忙吧！遇到困難時，就是要一家人一起面對啊。", next: "q4_end_4" },
+  { id: "q4_end_4", type: "dialogue", speaker: "安妮亞", avatarColor: "#f8c6b5", text: "安妮亞也要幫忙！密碼是 FAMILY，所以一家人要一起轉！", next: "end" },
+  { id: "end", type: "dialogue", speaker: "系統", avatarColor: "#ccc", text: "（全劇終。感謝遊玩《安妮亞入學大作戰》！）", next: null },
 ];
