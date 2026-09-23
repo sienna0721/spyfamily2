@@ -18,6 +18,14 @@ const dialogueText = document.querySelector("#dialogue-text");
 const avatar = document.querySelector("#avatar");
 const choicePanel = document.querySelector("#choice-panel");
 const keypadPanel = document.querySelector("#keypad-panel");
+
+// 🔽 任務 1：新增 investigationPanel 變數
+const investigationPanel = document.createElement("div");
+investigationPanel.id = "investigation-panel";
+investigationPanel.className = "interaction-panel investigation-panel is-hidden";
+choicePanel.parentNode.append(investigationPanel);
+// 🔼 新增結束
+
 const historyButton = document.querySelector("#history-button");
 const hintButton = document.querySelector("#hint-button");
 const historyModal = document.querySelector("#history-modal");
@@ -86,10 +94,13 @@ function switchScene(fromScene, toScene) {
   window.setTimeout(() => toScene.classList.remove("is-hidden"), 120);
 }
 
+// 🔽 任務 2：更新 hideInteractionPanels
 function hideInteractionPanels() {
   choicePanel.classList.add("is-hidden");
   keypadPanel.classList.add("is-hidden");
+  investigationPanel.classList.add("is-hidden");
 }
+// 🔼 更新結束
 
 function updateCharacter(dialogue) {
   speakerName.textContent = dialogue.speaker;
@@ -268,6 +279,110 @@ function renderKeypad(node) {
   keypadPanel.append(grid);
   keypadPanel.classList.remove("is-hidden");
 }
+
+// 🔽 任務 3：新增 renderInvestigation 函式
+function renderInvestigation(node) {
+  investigationPanel.replaceChildren();
+
+  const door = document.createElement("div");
+  door.className = "investigation-door";
+
+  node.items.forEach((item) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = `investigate-btn btn-${item.id}`;
+    button.textContent = item.label;
+    button.style.top = item.top;
+    button.style.left = item.left;
+    button.setAttribute("aria-label", item.label);
+    button.addEventListener("click", () => showNode(item.next));
+
+    door.append(button);
+  });
+
+  investigationPanel.append(door);
+  investigationPanel.classList.remove("is-hidden");
+}
+// 🔼 新增結束
+
+// 🔽 任務 4：新增 renderPasswordKeypad 函式
+function renderPasswordKeypad(node) {
+  keypadPanel.replaceChildren();
+
+  let passwordInput = "";
+  let keypadLocked = false;
+  const letters = ["A", "S", "P", "I", "M", "F", "L", "Y", "B"];
+
+  const panel = document.createElement("div");
+  panel.className = "cipher-panel";
+
+  const display = document.createElement("div");
+  display.className = "password-display";
+  display.textContent = "KFRNQD";
+
+  const grid = document.createElement("div");
+  grid.className = "keyboard-grid-3x3";
+
+  function resetDisplay() {
+    passwordInput = "";
+    display.textContent = "KFRNQD";
+    display.classList.remove("unlock-success", "unlock-fail");
+  }
+
+  function updateDisplay() {
+    const paddedInput = passwordInput.padEnd(6, "_");
+    display.textContent = paddedInput;
+  }
+
+  function verifyPassword() {
+    keypadLocked = true;
+
+    if (passwordInput === node.correct) {
+      display.classList.add("unlock-success");
+
+      window.setTimeout(() => {
+        resetDisplay();
+        showNode(node.nextCorrect);
+      }, 1200);
+      return;
+    }
+
+    display.classList.add("unlock-fail");
+
+    window.setTimeout(() => {
+      display.classList.remove("unlock-fail");
+
+      window.setTimeout(() => {
+        resetDisplay();
+        showNode(node.nextWrong);
+      }, 600);
+    }, 500);
+  }
+
+  letters.forEach((letter) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "key-letter";
+    button.textContent = letter;
+    button.setAttribute("aria-label", `輸入字母 ${letter}`);
+
+    button.addEventListener("click", () => {
+      if (keypadLocked || passwordInput.length >= 6) return;
+
+      passwordInput += letter;
+      updateDisplay();
+
+      if (passwordInput.length === 6) verifyPassword();
+    });
+
+    grid.append(button);
+  });
+
+  panel.append(display, grid);
+  keypadPanel.append(panel);
+  keypadPanel.classList.remove("is-hidden");
+}
+// 🔼 新增結束
 
 // ---------- 第三關 Canvas：校園巡邏 ----------
 
@@ -514,9 +629,14 @@ function showNode(nodeId) {
   gameCanvas.hidden = true;
   gameCanvas.classList.remove("is-visible");
   dialogueBox.hidden = false;
+  
+  // 🔽 任務 5：更新 showNode 判斷式
   if (node.type === "dialogue") startTypewriter(node);
   if (node.type === "choice") renderChoice(node);
   if (node.type === "keypad") renderKeypad(node);
+  if (node.type === "investigation") renderInvestigation(node);
+  if (node.type === "password_keypad") renderPasswordKeypad(node);
+  // 🔼 更新結束
 }
 
 function advanceDialogue() {
@@ -543,52 +663,4 @@ function advanceDialogue() {
     dialogueText.innerHTML = dialogueToHtml(currentNode.text).map((token) => token.html).join("");
     return;
   }
-  if (currentNode.next) showNode(currentNode.next);
-}
-
-// Loading Scene 
-window.setTimeout(() => switchScene(loadingScene, titleScene), 2000);
-
-startButton.addEventListener("click", () => {
-  switchScene(titleScene, dialogueScene);
-  showNode("start");
-});
-
-dialogueBox.addEventListener("click", advanceDialogue);
-videoTutorialReadyButton.addEventListener("click", closeVideoTutorial);
-gameCanvas.addEventListener("click", handleCanvasClick);
-
-historyButton.addEventListener("click", () => {
-  renderDialogueHistory();
-  openModal(historyModal);
-});
-hintButton.addEventListener("click", () => openHintModal());
-
-document.querySelectorAll("[data-close-modal]").forEach((button) => {
-  button.addEventListener("click", () => closeModal(document.querySelector(`#${button.dataset.closeModal}`)));
-});
-
-[historyModal, hintModal].forEach((modal) => {
-  modal.addEventListener("click", (event) => {
-    if (event.target === modal) closeModal(modal);
-  });
-});
-
-window.addEventListener("keydown", (event) => {
-  if (patrolState.active) {
-    handlePatrolKey(event);
-    return;
-  }
-
-  if (event.code === "Escape") {
-    closeModal(historyModal);
-    closeModal(hintModal);
-    return;
-  }
-  if ((event.code === "Space" || event.code === "Enter") && !dialogueScene.classList.contains("is-hidden")) {
-    if (historyModal.classList.contains("modal-open") || hintModal.classList.contains("modal-open")) return;
-    event.preventDefault();
-    advanceDialogue();
-  }
-});
-
+  if (currentNode.next) showNode(currentNode.
