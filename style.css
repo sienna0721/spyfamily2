@@ -316,7 +316,26 @@ h1 { margin: 0; color: var(--ink); font-size: clamp(2.4rem, 7vw, 6rem); font-wei
   grid-template-columns: repeat(3, 1fr);
   gap: 12px;
 }
+.character-sprite {
+  position: absolute;
+  right: 12%;
+  bottom: 0;
+  z-index: 1;
+  height: 75vh;
+  max-width: min(42vw, 420px);
+  object-fit: contain;
+  opacity: 1;
+  transform: translateX(0);
+  transition: opacity .4s ease, transform .4s ease;
+  pointer-events: none;
+}
 
+.character-sprite.is-hidden {
+  opacity: 0;
+  transform: translateX(30px);
+  pointer-events: none;
+  visibility: visible;
+}
 .key-letter {
   min-height: 58px;
   border: 1.5px solid var(--line);
