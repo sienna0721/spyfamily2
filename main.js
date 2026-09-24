@@ -16,15 +16,18 @@ const dialogueBox = document.querySelector("#dialogue-box");
 const speakerName = document.querySelector("#speaker-name");
 const dialogueText = document.querySelector("#dialogue-text");
 const avatar = document.querySelector("#avatar");
+
+// 🔽 任務：新增立繪與背景的 DOM 元素抓取
+const characterSprite = document.querySelector("#character-sprite"); 
+// 🔼 新增結束
+
 const choicePanel = document.querySelector("#choice-panel");
 const keypadPanel = document.querySelector("#keypad-panel");
 
-// 🔽 任務 1：新增 investigationPanel 變數
 const investigationPanel = document.createElement("div");
 investigationPanel.id = "investigation-panel";
 investigationPanel.className = "interaction-panel investigation-panel is-hidden";
 choicePanel.parentNode.append(investigationPanel);
-// 🔼 新增結束
 
 const historyButton = document.querySelector("#history-button");
 const hintButton = document.querySelector("#hint-button");
@@ -94,19 +97,33 @@ function switchScene(fromScene, toScene) {
   window.setTimeout(() => toScene.classList.remove("is-hidden"), 120);
 }
 
-// 🔽 任務 2：更新 hideInteractionPanels
 function hideInteractionPanels() {
   choicePanel.classList.add("is-hidden");
   keypadPanel.classList.add("is-hidden");
   investigationPanel.classList.add("is-hidden");
 }
-// 🔼 更新結束
 
 function updateCharacter(dialogue) {
   speakerName.textContent = dialogue.speaker;
   avatar.textContent = dialogue.speaker?.charAt(0) || "?";
   avatar.style.backgroundColor = dialogue.avatarColor || "#cccccc";
 }
+
+// 🔽 任務：新增視覺更新函式 (立繪切換與淡入淡出)
+function updateVisuals(node) {
+  // 當明確設定 sprite 為 null，或是系統發話時，隱藏並淡出立繪
+  if (node.sprite === null || node.speaker === "系統") {
+    characterSprite.classList.add("is-hidden");
+    return;
+  }
+
+  // 當有設定 sprite 屬性時，替換圖片並淡入顯示
+  if (node.sprite) {
+    characterSprite.src = node.sprite;
+    characterSprite.classList.remove("is-hidden");
+  }
+}
+// 🔼 新增結束
 
 function dialogueToHtml(text) {
   const tokens = [];
@@ -223,7 +240,7 @@ function renderChoice(node) {
     button.type = "button";
     button.className = "choice-button";
     button.textContent = option.text;
-    button.setAttribute("aria-label", `選項 index+1：{option.text}`);
+    button.setAttribute("aria-label", `選項 ${index + 1}：${option.text}`);
     button.addEventListener("click", () => handleChoice(option));
     choicePanel.append(button);
   });
@@ -231,7 +248,6 @@ function renderChoice(node) {
 }
 
 function renderKeypad(node) {
-  // 狀態保留：若密碼盤已建立，直接顯示，保留按錯的按鈕狀態
   if (keypadPanel.querySelector(".keypad-button")) {
     keypadPanel.classList.remove("is-hidden");
     return;
@@ -267,7 +283,7 @@ function renderKeypad(node) {
         playerStats.q2Mistakes += 1;
         if (playerStats.q2Mistakes === 2) {
           hideInteractionPanels();
-          showNode("q2_subtle_hint"); // 轉交給 data.js 中的劇情處理
+          showNode("q2_subtle_hint");
           return;
         }
       }
@@ -280,7 +296,6 @@ function renderKeypad(node) {
   keypadPanel.classList.remove("is-hidden");
 }
 
-// 🔽 任務 3：新增 renderInvestigation 函式
 function renderInvestigation(node) {
   investigationPanel.replaceChildren();
 
@@ -303,9 +318,7 @@ function renderInvestigation(node) {
   investigationPanel.append(door);
   investigationPanel.classList.remove("is-hidden");
 }
-// 🔼 新增結束
 
-// 🔽 任務 4：新增 renderPasswordKeypad 函式
 function renderPasswordKeypad(node) {
   keypadPanel.replaceChildren();
 
@@ -382,7 +395,6 @@ function renderPasswordKeypad(node) {
   keypadPanel.append(panel);
   keypadPanel.classList.remove("is-hidden");
 }
-// 🔼 新增結束
 
 // ---------- 第三關 Canvas：校園巡邏 ----------
 
@@ -433,7 +445,6 @@ function drawPatrolMap() {
     ctx.lineWidth = 2;
     ctx.stroke();
     
-    // 強化當前所在位置的標示（發光與加粗外框）
     if (name === patrolState.currentNode) {
       ctx.shadowColor = "#f8e4a8";
       ctx.shadowBlur = 15;
@@ -619,7 +630,11 @@ function showNode(nodeId) {
   const node = dialogueMap.get(nodeId);
   if (!node) return;
   currentNodeId = nodeId;
+  
+  // 🔽 任務：進入節點時更新視覺與隱藏舊有面板
+  updateVisuals(node);
   hideInteractionPanels();
+  // 🔼 新增結束
 
   if (node.type === "canvas_patrol") {
     startPatrol();
@@ -630,13 +645,11 @@ function showNode(nodeId) {
   gameCanvas.classList.remove("is-visible");
   dialogueBox.hidden = false;
   
-  // 🔽 任務 5：更新 showNode 判斷式
   if (node.type === "dialogue") startTypewriter(node);
   if (node.type === "choice") renderChoice(node);
   if (node.type === "keypad") renderKeypad(node);
   if (node.type === "investigation") renderInvestigation(node);
   if (node.type === "password_keypad") renderPasswordKeypad(node);
-  // 🔼 更新結束
 }
 
 function advanceDialogue() {
@@ -711,4 +724,3 @@ window.addEventListener("keydown", (event) => {
     advanceDialogue();
   }
 });
-
