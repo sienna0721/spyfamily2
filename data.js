@@ -10,7 +10,7 @@ export const assets = {
     meeting_room: "background.png",
     number_blackboard: "number.png",
     route_blackboard:"blackboard_route.png",
-    password_input: "password.png",
+    password_input: "password.png"
     
       
   },
@@ -28,7 +28,7 @@ export const assets = {
     yoru_calm: "images/yoru_calm.png",
     yoru_angry: "images/yoru_angry.png",
     yoru_shy: "images/yoru_shy.png",
-    yoru_scared: "images/yoru_scared.png",
+    yoru_scared: "images/yoru_scared.png"
     // 範例：anya_smile: "images/anya_smile.png",
   },
   // 特寫插圖 (CG / Props)
