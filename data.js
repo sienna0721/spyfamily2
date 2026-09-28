@@ -14,19 +14,19 @@ export const assets = {
   },
   // 角色立繪 (Sprites)
   sprite: {
-    anya_smile: "images/anya_smile.png",
-    anya_thinking: "images/anya_thinking.png",
-    anya_scared: "images/anya_scared.png",
-    anya_shy: "images/anya_shy.png",
-    anya_cry: "images/anya_cry.png",
-    forger_strict: "images/forger_strict.png",
-    forger_calm: "images/forger_calm.png",
-    forger_polite: "images/forger_polite.png",
-    forger_surprise: "images/forger_surprise.png",
-    yoru_calm: "images/yoru_calm.png",
-    yoru_angry: "images/yoru_angry.png",
-    yoru_shy: "images/yoru_shy.png",
-    yoru_scared: "images/yoru_scared.png"
+    anya_smile: "anya_smile.png",
+    anya_thinking: "anya_thinking.png",
+    anya_scared: "anya_scared.png",
+    anya_shy: "anya_shy.png",
+    anya_cry: "anya_cry.png",
+    forger_strict: "forger_strict.png",
+    forger_calm: "forger_calm.png",
+    forger_polite: "forger_polite.png",
+    forger_surprise: "forger_surprise.png",
+    yoru_calm: "yoru_calm.png",
+    yoru_angry: "yoru_angry.png",
+    yoru_shy: "yoru_shy.png",
+    yoru_scared: "yoru_scared.png"
   },
   // 特寫插圖 (CG / Props)
   cg: {
