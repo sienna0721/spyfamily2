@@ -8,11 +8,10 @@ export const assets = {
   // 背景圖 (Backgrounds)
   bg: {
     meeting_room: "background.png",
-    teacher: ,
     number_blackboard: "number.png",
     route_blackboard:"blackboard_route.png",
     password_input: "password.png",
-    password_right: ,
+    
       
   },
   // 角色立繪 (Sprites)
