@@ -51,7 +51,20 @@ export const dialogues = [
     text: "陽光透過巨大的落地窗灑進考場。亨利·韓德森老師端著精緻的骨瓷茶杯，輕輕啜飲了一口紅茶。在他面前的紅色天鵝絨沙發上，洛伊德、約兒與安妮亞三人嚴陣以待，展現出無懈可擊的服裝儀容。", 
     next: "q1_1" 
   },
-  { id: "q1_1", type: "dialogue", speaker: "亨利老師", avatarColor: "#a8d8b9", sprite: null, text: "佛傑一家，你們的外表與禮儀確實無可挑惕，但伊甸學園要培育的，是能在未來的真實社會中解決問題的菁英。真正的優雅，絕非在紙上死背公式，而是能在實作與生活經驗中，展現出完美無缺的邏輯推演！這才是我們學校該有的模樣！", next: "q1_2" },
+  { 
+    id: "q1_1", 
+    type: "dialogue", 
+    speaker: "亨利老師", 
+    avatarColor: "#a8d8b9", 
+    // 🔽 啟動三人立繪同台 🔽
+    sprites: {
+      left: assets.sprite.yoru_calm,
+      center: assets.sprite.anya_scared,
+      right: assets.sprite.forger_polite
+    },
+    text: "佛傑一家，你們的外表與禮儀確實無可挑惕，但伊甸學園要培育的，是能在未來的真實社會中解決問題的菁英。真正的優雅，絕非在紙上死背公式，而是能在實作與生活經驗中，展現出完美無缺的邏輯推演！這才是我們學校該有的模樣！", 
+    next: "q1_2" 
+  },
   { id: "q1_2", type: "dialogue", speaker: "亨利老師", avatarColor: "#a8d8b9", text: "因此，我準備了四道融入真實情境的『邏輯考驗』。只要你們能在這四個關卡中，展現出無可挑惕的理性與從容不迫的優雅，我就核准安妮亞同學的入學資格。準備好迎接挑戰了嗎？", next: "q1_3" },
   { id: "q1_3", type: "dialogue", speaker: "亨利老師", avatarColor: "#a8d8b9", text: "觀察力是邏輯的基礎。你們看，現在校門口剛好有 13 位正在排隊的考生。雖然我尚未閱覽過他們的入學資料，但我可以百分之百確定：這 13 個人之中，絕對至少有兩個人的生日是在同一個月份！請告訴我，這個推論的合理性在哪裡？", next: "q1_choice" },
   
@@ -187,4 +200,3 @@ export const dialogues = [
   { id: "q4_end_4", type: "dialogue", speaker: "安妮亞", avatarColor: "#f8c6b5", sprite: assets.sprite.anya_smile, text: "安妮亞也要幫忙！密碼是 FAMILY，所以一家人要一起轉！", next: "end" },
   { id: "end", type: "dialogue", speaker: "系統", avatarColor: "#ccc", sprite: null, text: "（全劇終。感謝遊玩《安妮亞入學大作戰》！）", next: null },
 ];
-
