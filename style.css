@@ -325,9 +325,9 @@ h1 { margin: 0; color: var(--ink); font-size: clamp(2.4rem, 7vw, 6rem); font-wei
   right: 12%; 
   
   /* 60vh x 3 = 180vh */
-  height: 180vh; 
+  height: 150vh; 
   /* 圖片太高了，必須往下沉，把臉部拉回螢幕內 */
-  bottom: -80vh; 
+  bottom: -50vh; 
   
   z-index: 1; 
   
@@ -353,18 +353,18 @@ h1 { margin: 0; color: var(--ink); font-size: clamp(2.4rem, 7vw, 6rem); font-wei
 /* ---------- 約兒專屬立繪調整 (放大 3 倍) ---------- */
 .character-sprite.char-yoru {
   /* 85vh x 3 = 255vh */
-  height: 255vh; 
+  height: 212.5vh; 
   /* 因為圖片變得超級大，必須把腰部以下全部藏到螢幕底部 */
-  bottom: -155vh; 
+  bottom: -145vh; 
   right: 15%; 
 }
 
 /* ---------- 洛伊德專屬立繪調整 (放大 3 倍) ---------- */
 .character-sprite.char-loid {
   /* 92vh x 3 = 276vh */
-  height: 276vh; 
+  height: 230vh; 
   /* 往下沉的深度要更深，才能維持與約兒、安妮亞的視覺身高差 */
-  bottom: -176vh; 
+  bottom: -156vh; 
   right: 15%; 
 }
 .key-letter {
