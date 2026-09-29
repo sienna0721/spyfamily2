@@ -317,21 +317,29 @@ h1 { margin: 0; color: var(--ink); font-size: clamp(2.4rem, 7vw, 6rem); font-wei
   gap: 12px;
 }
 /* ---------- 基礎角色立繪（預設為安妮亞與小孩尺寸） ---------- */
+
+
+/* ---------- 基礎角色立繪（放大 3 倍的安妮亞） ---------- */
 .character-sprite {
   position: absolute;
   right: 12%; 
-  bottom: 0; /* 腳底穩穩踩著，不往下沉 */
-  z-index: 1;
   
-  /* 安妮亞的高度：大約佔螢幕 60% */
-  height: 60vh; 
-  max-width: 65vw; 
+  /* 60vh x 3 = 180vh */
+  height: 180vh; 
+  /* 圖片太高了，必須往下沉，把臉部拉回螢幕內 */
+  bottom: -80vh; 
+  
+  z-index: 1; 
+  
+  /* ⚠️ 關鍵解鎖：解除寬度限制，讓圖片能自由等比例放大 */
+  max-width: none; 
   
   object-fit: contain;
-  object-position: bottom center; /* 確保從腳底開始往上長 */
+  object-position: bottom center; 
+  
   opacity: 1;
   transform: translateX(0);
-  transition: opacity .4s ease, transform .4s ease, height .4s ease;
+  transition: opacity .4s ease, transform .4s ease, height .4s ease, bottom .4s ease;
   pointer-events: none;
 }
 
@@ -342,17 +350,21 @@ h1 { margin: 0; color: var(--ink); font-size: clamp(2.4rem, 7vw, 6rem); font-wei
   visibility: visible;
 }
 
-/* ---------- 約兒專屬立繪調整 (char-yoru) ---------- */
+/* ---------- 約兒專屬立繪調整 (放大 3 倍) ---------- */
 .character-sprite.char-yoru {
-  /* 約兒的高度：大約佔螢幕 85% */
-  height: 85vh; 
+  /* 85vh x 3 = 255vh */
+  height: 255vh; 
+  /* 因為圖片變得超級大，必須把腰部以下全部藏到螢幕底部 */
+  bottom: -155vh; 
   right: 15%; 
 }
 
-/* ---------- 洛伊德專屬立繪調整 (char-loid) ---------- */
+/* ---------- 洛伊德專屬立繪調整 (放大 3 倍) ---------- */
 .character-sprite.char-loid {
-  /* 洛伊德的高度：大約佔螢幕 92% */
-  height: 92vh; 
+  /* 92vh x 3 = 276vh */
+  height: 276vh; 
+  /* 往下沉的深度要更深，才能維持與約兒、安妮亞的視覺身高差 */
+  bottom: -176vh; 
   right: 15%; 
 }
 .key-letter {
