@@ -17,9 +17,8 @@ const speakerName = document.querySelector("#speaker-name");
 const dialogueText = document.querySelector("#dialogue-text");
 const avatar = document.querySelector("#avatar");
 
-// 🔽 任務：新增立繪與背景的 DOM 元素抓取
+// 立繪的 DOM 元素抓取
 const characterSprite = document.querySelector("#character-sprite"); 
-// 🔼 新增結束
 
 const choicePanel = document.querySelector("#choice-panel");
 const keypadPanel = document.querySelector("#keypad-panel");
@@ -109,10 +108,9 @@ function updateCharacter(dialogue) {
   avatar.style.backgroundColor = dialogue.avatarColor || "#cccccc";
 }
 
-// 🔽 任務：新增視覺更新函式 (立繪切換、淡入淡出、與角色連動放大)
+// 🔽 已完美修復的視覺更新函式 (立繪切換、淡入淡出、與角色連動放大)
 function updateVisuals(node) {
-  // 1. 檢查並更新背景 (如果你有使用 bgLayer)
-  // 如果你前面沒有定義 bgLayer，這段可以保留備用或先註解掉
+  // 1. 檢查並更新背景 (如有需要可解開註解)
   /*
   if (node.bg && typeof bgLayer !== 'undefined') {
     bgLayer.style.backgroundImage = `url('${node.bg}')`;
@@ -120,43 +118,54 @@ function updateVisuals(node) {
   */
 
   // 2. 檢查並更新立繪
-  // 2. 檢查並更新立繪
-  if (node.sprite === null || node.speaker === "系統") {
+  if (node.sprite === null || node.speaker === "系統" || node.speaker === "旁白") {
+    // 遇到旁白或系統，直接隱藏
     characterSprite.classList.add("is-hidden");
   } else if (node.sprite) {
-    
-    // 判斷是否需要換新圖 (使用 endsWith 處理絕對路徑與相對路徑)
-    if (!characterSprite.src.endsWith(node.sprite)) {
-      
-      // 1. 先把目前的舊圖片隱藏 (觸發 CSS 的淡出動畫)
+    // 檢查這次要顯示的圖片，跟目前正在顯示的是不是同一張（使用 pathname 確保精準比對）
+    const currentSpriteSrc = new URL(characterSprite.src, window.location.href).pathname;
+    const targetSpriteSrc = new URL(node.sprite, window.location.href).pathname;
+
+    if (currentSpriteSrc !== targetSpriteSrc) {
+      // 動作 A：先隱藏當前的舊圖片 (觸發 CSS 淡出動畫)
       characterSprite.classList.add("is-hidden");
       
-      // 清除上一次可能還沒跑完的計時器 (防止玩家狂點造成動畫錯亂)
+      // 清除計時器防止錯亂
       clearTimeout(window.spriteTimeout);
       
-      // 2. 等待 200 毫秒（淡出差不多了），再偷偷換上新圖片與新尺寸
+      // 動作 B：等待 200 毫秒（淡出結束後），再做換圖與換標籤
       window.spriteTimeout = setTimeout(() => {
+        // 正式換上新圖片
         characterSprite.src = node.sprite;
         
-        // 重新判定專屬尺寸
-        characterSprite.classList.remove("char-yoru", "char-loid");
+        // 撕掉舊標籤，恢復預設大小
+        characterSprite.classList.remove("char-yoru", "char-loid"); 
+        
+        // 重新貼上新標籤
         if (node.speaker && node.speaker.includes("約兒")) {
-          characterSprite.classList.add("char-yoru");
+          characterSprite.classList.add("char-yoru"); 
         } else if (node.speaker && node.speaker.includes("洛伊德")) {
-          characterSprite.classList.add("char-loid");
+          characterSprite.classList.add("char-loid"); 
         }
         
-        // 3. 換裝完畢，解除隱藏 (觸發 CSS 的淡入動畫)
+        // 動作 C：解除隱藏 (觸發 CSS 淡入動畫)
         characterSprite.classList.remove("is-hidden");
       }, 200);
 
     } else {
-      // 如果下一句話還是同一張圖，就確保它是顯示狀態就好，不觸發閃爍
+      // 如果下一句話還是同一張圖，只需要檢查是不是剛好要換標籤
+      characterSprite.classList.remove("char-yoru", "char-loid"); 
+      if (node.speaker && node.speaker.includes("約兒")) {
+        characterSprite.classList.add("char-yoru"); 
+      } else if (node.speaker && node.speaker.includes("洛伊德")) {
+        characterSprite.classList.add("char-loid"); 
+      }
+      // 確保它是顯示狀態
       characterSprite.classList.remove("is-hidden");
     }
   }
 
-  // 3. 檢查並更新特寫插圖 (CG) (如果你有使用 cgLayer)
+  // 3. 檢查並更新 CG (如有需要可解開註解)
   /*
   if (typeof cgLayer !== 'undefined') {
     if (node.cg === null) {
@@ -168,7 +177,7 @@ function updateVisuals(node) {
   }
   */
 }
-// 🔼 新增結束
+// 🔼 視覺更新函式結束
 
 function dialogueToHtml(text) {
   const tokens = [];
@@ -676,10 +685,9 @@ function showNode(nodeId) {
   if (!node) return;
   currentNodeId = nodeId;
   
-  // 🔽 任務：進入節點時更新視覺與隱藏舊有面板
+  // 進入節點時更新視覺與隱藏舊有面板
   updateVisuals(node);
   hideInteractionPanels();
-  // 🔼 新增結束
 
   if (node.type === "canvas_patrol") {
     startPatrol();
