@@ -316,55 +316,64 @@ h1 { margin: 0; color: var(--ink); font-size: clamp(2.4rem, 7vw, 6rem); font-wei
   grid-template-columns: repeat(3, 1fr);
   gap: 12px;
 }
-/* ---------- 基礎角色立繪（預設為安妮亞與小孩尺寸） ---------- */
 
+/* 🔽 修改為三人舞台的 CSS 🔽 */
+.character-stage {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
 
-/* ---------- 基礎角色立繪（放大 3 倍的安妮亞） ---------- */
 .character-sprite {
   position: absolute;
-  right: 22%; 
-  
-  /* 60vh x 3 = 180vh */
-  height: 120vh; 
-  /* 圖片太高了，必須往下沉，把臉部拉回螢幕內 */
-  bottom: -18vh; 
-  
-  z-index: 1; 
-  
-  /* ⚠️ 關鍵解鎖：解除寬度限制，讓圖片能自由等比例放大 */
-  max-width: none; 
-  
+  bottom: -18vh;
+  height: 120vh;
+  max-width: none;
   object-fit: contain;
-  object-position: bottom center; 
+  object-position: bottom center;
   opacity: 1;
-  transition: opacity .4s ease;
+  visibility: visible;
+  transition:
+    opacity .4s ease,
+    transform .4s ease;
   pointer-events: none;
 }
 
 .character-sprite.is-hidden {
   opacity: 0;
-  
   pointer-events: none;
   visibility: visible;
 }
 
-/* ---------- 約兒專屬立繪調整 (放大 3 倍) ---------- */
-.character-sprite.char-yoru {
-  /* 85vh x 3 = 255vh */
-  height: 170vh; 
-  /* 因為圖片變得超級大，必須把腰部以下全部藏到螢幕底部 */
-  bottom: -100vh; 
-  right: 15%; 
+#sprite-left {
+  left: -5%;
+  right: auto;
 }
 
-/* ---------- 洛伊德專屬立繪調整 (放大 3 倍) ---------- */
-.character-sprite.char-loid {
-  /* 92vh x 3 = 276vh */
-  height: 184vh; 
-  /* 往下沉的深度要更深，才能維持與約兒、安妮亞的視覺身高差 */
-  bottom: -110vh; 
-  right: 15%; 
+#sprite-center {
+  left: 50%;
+  right: auto;
+  transform: translateX(-50%);
 }
+
+#sprite-right {
+  right: -5%;
+  left: auto;
+}
+
+/* ⚠️ 注意這裡已經移除了 right 屬性，避免覆蓋定位 */
+.character-sprite.char-yoru {
+  height: 170vh;
+  bottom: -100vh;
+}
+
+.character-sprite.char-loid {
+  height: 184vh;
+  bottom: -110vh;
+}
+/* 🔼 三人舞台 CSS 結束 🔼 */
+
 .key-letter {
   min-height: 58px;
   border: 1.5px solid var(--line);
