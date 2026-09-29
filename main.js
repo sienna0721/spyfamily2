@@ -148,7 +148,7 @@ function updateVisuals(node) {
     cgLayer.src = node.cg;
     cgLayer.classList.remove("is-hidden");
   }
-}
+
 
 function dialogueToHtml(text) {
   const tokens = [];
