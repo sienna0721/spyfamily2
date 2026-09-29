@@ -7,22 +7,19 @@ const dialogueMap = new Map(dialogues.map((dialogue) => [dialogue.id, dialogue])
 let dialogueHistory = [];
 let playerStats = { q1Mistakes: 0, q2Mistakes: 0 };
 
-// 🔽 🚨 新增：圖片預載機制 (Preload) 
+// 圖片預載機制 (Preload) 
 const preloadedImages = {}; // 存放載入完成的圖片物件
 function preloadAllSprites() {
   for (const key in assets.sprite) {
     if (assets.sprite[key]) {
       const img = new Image();
       img.src = assets.sprite[key];
-      // 將載入好的圖片物件存起來備用
       preloadedImages[assets.sprite[key]] = img;
     }
   }
   console.log("✔️ 所有角色立繪已發送預載請求！");
 }
-// 啟動預載
 preloadAllSprites();
-// 🔼 新增結束
 
 // 場景與一般 UI 元素。
 const loadingScene = document.querySelector("#loading-scene");
@@ -34,8 +31,10 @@ const speakerName = document.querySelector("#speaker-name");
 const dialogueText = document.querySelector("#dialogue-text");
 const avatar = document.querySelector("#avatar");
 
-// 立繪的 DOM 元素抓取
-const characterSprite = document.querySelector("#character-sprite"); 
+// 🔽 抓取新的三人立繪 DOM 元素 🔽
+const spriteLeft = document.querySelector("#sprite-left");
+const spriteCenter = document.querySelector("#sprite-center");
+const spriteRight = document.querySelector("#sprite-right");
 
 const choicePanel = document.querySelector("#choice-panel");
 const keypadPanel = document.querySelector("#keypad-panel");
@@ -57,7 +56,7 @@ const gameCanvas = document.querySelector("#gameCanvas");
 const canvasContext = gameCanvas.getContext("2d");
 const canvasStatus = document.querySelector("#canvas-status");
 
-// 修正一：修正安妮亞小圖的路徑
+// 修正安妮亞小圖的路徑
 let anyaImg = new Image();
 anyaImg.src = "anya_sprite.png"; 
 anyaImg.addEventListener("load", () => {
@@ -126,38 +125,67 @@ function updateCharacter(dialogue) {
   avatar.style.backgroundColor = dialogue.avatarColor || "#cccccc";
 }
 
-// 修正二：極簡暴力版
+// 🔽 輔助更新單一立繪函式 🔽
+function updateSingleSprite(element, imagePath) {
+  if (!imagePath) {
+    element.className = "character-sprite is-hidden";
+    element.removeAttribute("src");
+    return;
+  }
+
+  element.className = "character-sprite";
+  // 加上隨機時間戳記強迫刷新防快取卡圖
+  element.src = `${imagePath}?t=${new Date().getTime()}`;
+
+  const normalizedPath = String(imagePath).toLowerCase();
+
+  // 智慧判斷身高：檔名包含 yoru 就變高，包含 forger 就變最高
+  if (normalizedPath.includes("yoru")) {
+    element.classList.add("char-yoru");
+  }
+  if (normalizedPath.includes("forger")) {
+    element.classList.add("char-loid");
+  }
+
+  element.classList.remove("is-hidden");
+}
+
+// 🔽 更新整體視覺 (三人舞台版) 🔽
 function updateVisuals(node) {
-  // 1. 檢查並更新背景
-  /*
-  if (node.bg && typeof bgLayer !== 'undefined') {
-    bgLayer.style.backgroundImage = `url('${node.bg}')`;
-  }
-  */
+  const hasSprites = Boolean(node.sprites);
+  const hasSingleSprite = Boolean(node.sprite);
 
-  // 2. 檢查並更新立繪
-  if (node.sprite === null || node.speaker === "系統" || node.speaker === "旁白") {
-    characterSprite.classList.add("is-hidden");
+  const isSystemNarration =
+    node.speaker === "系統" ||
+    node.speaker === "旁白";
+
+  // 1. 若是系統或旁白且沒有強制指定圖片，全部隱藏
+  if (isSystemNarration && !hasSprites && !hasSingleSprite) {
+    updateSingleSprite(spriteLeft, null);
+    updateSingleSprite(spriteCenter, null);
+    updateSingleSprite(spriteRight, null);
   } 
-  else if (node.sprite) {
-    console.log("準備換上這張圖片：", node.sprite);
-    
-    // 【關鍵 1】暴力替換 src
-    characterSprite.setAttribute("src", node.sprite);
-    
-    // 【關鍵 2】終極重置
-    characterSprite.className = "character-sprite";
-    
-    // 【關鍵 3】根據說話者重新貼上尺寸放大標籤
-    if (node.speaker && node.speaker.includes("約兒")) {
-      characterSprite.classList.add("char-yoru");
-    } else if (node.speaker && node.speaker.includes("洛伊德")) {
-      characterSprite.classList.add("char-loid"); 
-    }
+  // 2. 啟動多人同台模式 (sprites 物件)
+  else if (hasSprites) {
+    updateSingleSprite(spriteLeft, node.sprites.left);
+    updateSingleSprite(spriteCenter, node.sprites.center);
+    updateSingleSprite(spriteRight, node.sprites.right);
+  } 
+  // 3. 相容舊版的單人模式 (sprite 字串) -> 放在中間
+  else if (hasSingleSprite) {
+    updateSingleSprite(spriteLeft, null);
+    updateSingleSprite(spriteCenter, node.sprite);
+    updateSingleSprite(spriteRight, null);
+  } 
+  // 4. 什麼都沒有，全部清空
+  else {
+    updateSingleSprite(spriteLeft, null);
+    updateSingleSprite(spriteCenter, null);
+    updateSingleSprite(spriteRight, null);
   }
 
-  // 3. 檢查並更新特寫插圖 (CG)
-  if (typeof cgLayer !== 'undefined') {
+  // 檢查並更新特寫插圖 (CG)
+  if (typeof cgLayer !== "undefined") {
     if (node.cg === null) {
       cgLayer.classList.add("is-hidden");
     } else if (node.cg) {
