@@ -109,19 +109,46 @@ function updateCharacter(dialogue) {
   avatar.style.backgroundColor = dialogue.avatarColor || "#cccccc";
 }
 
-// 🔽 任務：新增視覺更新函式 (立繪切換與淡入淡出)
+// 🔽 任務：新增視覺更新函式 (立繪切換、淡入淡出、與角色連動放大)
 function updateVisuals(node) {
-  // 當明確設定 sprite 為 null，或是系統發話時，隱藏並淡出立繪
-  if (node.sprite === null || node.speaker === "系統") {
-    characterSprite.classList.add("is-hidden");
-    return;
+  // 1. 檢查並更新背景 (如果你有使用 bgLayer)
+  // 如果你前面沒有定義 bgLayer，這段可以保留備用或先註解掉
+  /*
+  if (node.bg && typeof bgLayer !== 'undefined') {
+    bgLayer.style.backgroundImage = `url('${node.bg}')`;
   }
+  */
 
-  // 當有設定 sprite 屬性時，替換圖片並淡入顯示
-  if (node.sprite) {
+  // 2. 檢查並更新立繪
+  if (node.sprite === null || node.speaker === "系統" || node.speaker === "旁白") {
+    characterSprite.classList.add("is-hidden");
+  } else if (node.sprite) {
     characterSprite.src = node.sprite;
     characterSprite.classList.remove("is-hidden");
+    
+    // 🚨 這是產生「連動」的關鍵樞紐 🚨
+    // 先把所有可能殘留的成人標籤撕掉，恢復成安妮亞的預設大小 (180vh)
+    characterSprite.classList.remove("char-yoru", "char-loid"); 
+    
+    // 根據講話的人是誰，動態貼上對應的 CSS 標籤
+    if (node.speaker && node.speaker.includes("約兒")) {
+      characterSprite.classList.add("char-yoru"); // 觸發 255vh 放大效果
+    } else if (node.speaker && node.speaker.includes("洛伊德")) {
+      characterSprite.classList.add("char-loid"); // 觸發 276vh 放大效果
+    }
   }
+
+  // 3. 檢查並更新特寫插圖 (CG) (如果你有使用 cgLayer)
+  /*
+  if (typeof cgLayer !== 'undefined') {
+    if (node.cg === null) {
+      cgLayer.classList.add("is-hidden");
+    } else if (node.cg) {
+      cgLayer.src = node.cg;
+      cgLayer.classList.remove("is-hidden");
+    }
+  }
+  */
 }
 // 🔼 新增結束
 
