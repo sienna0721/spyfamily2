@@ -108,48 +108,28 @@ function updateCharacter(dialogue) {
   avatar.style.backgroundColor = dialogue.avatarColor || "#cccccc";
 }
 
-// 🔽 最終強制換圖版：徹底解決圖片卡住與尺寸殘留問題
+// 🔽 極簡直球對決版：沒有延遲，完全對照 data.js 瞬間切換
 function updateVisuals(node) {
-  // 1. 檢查並更新背景 (如有需要可解開註解)
-  /*
-  if (node.bg && typeof bgLayer !== 'undefined') {
-    bgLayer.style.backgroundImage = `url('${node.bg}')`;
-  }
-  */
-
-  // 2. 檢查並更新立繪
+  // 1. 遇到沒有立繪、系統、旁白，直接隱藏
   if (node.sprite === null || node.speaker === "系統" || node.speaker === "旁白") {
-    // 遇到旁白或系統，直接隱藏
     characterSprite.classList.add("is-hidden");
-  } else if (node.sprite) {
+  } 
+  // 2. 只要有指定立繪，立刻更換
+  else if (node.sprite) {
+    // 【第一步】直接把 src 換成 data.js 裡設定的圖片路徑
+    characterSprite.setAttribute("src", node.sprite);
     
-    // 動作 A：先隱藏當前的舊圖片 (觸發 CSS 淡出動畫)
-    characterSprite.classList.add("is-hidden");
+    // 【第二步】把所有的 class 洗掉，回到最乾淨的狀態 (同時移除了 is-hidden)
+    characterSprite.className = "character-sprite";
     
-    // 清除計時器防止錯亂
-    clearTimeout(window.spriteTimeout);
-    
-    // 動作 B：等待 200 毫秒（淡出結束後），再做換圖與換標籤
-    window.spriteTimeout = setTimeout(() => {
-      
-      // 🚨 強制換圖核心：使用 getTime() 產生時間戳記，迫使瀏覽器重新載入圖片
-      const forceReloadUrl = `${node.sprite}?t=${new Date().getTime()}`;
-      characterSprite.setAttribute("src", forceReloadUrl);
-      
-      // 🚨 終極重置術：直接把 class 洗回最乾淨的狀態，連 is-hidden 都移除
-      characterSprite.className = "character-sprite"; 
-      
-      // 重新貼上專屬尺寸標籤
-      if (node.speaker && node.speaker.includes("約兒")) {
-        characterSprite.classList.add("char-yoru"); 
-      } else if (node.speaker && node.speaker.includes("洛伊德")) {
-        characterSprite.classList.add("char-loid"); 
-      }
-      
-    }, 200);
+    // 【第三步】看是誰說話，瞬間貼上對應的放大標籤
+    if (node.speaker && node.speaker.includes("約兒")) {
+      characterSprite.classList.add("char-yoru");
+    } else if (node.speaker && node.speaker.includes("洛伊德")) {
+      characterSprite.classList.add("char-loid");
+    }
   }
 }
-// 🔼 視覺更新函式結束
 
 function dialogueToHtml(text) {
   const tokens = [];
