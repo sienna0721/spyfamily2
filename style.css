@@ -325,7 +325,7 @@ h1 { margin: 0; color: var(--ink); font-size: clamp(2.4rem, 7vw, 6rem); font-wei
   right: 50%; 
   
   /* 60vh x 3 = 180vh */
-  height: 150vh; 
+  height: 120vh; 
   /* 圖片太高了，必須往下沉，把臉部拉回螢幕內 */
   bottom: -30vh; 
   
