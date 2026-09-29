@@ -120,21 +120,39 @@ function updateVisuals(node) {
   */
 
   // 2. 檢查並更新立繪
-  if (node.sprite === null || node.speaker === "系統" || node.speaker === "旁白") {
+  // 2. 檢查並更新立繪
+  if (node.sprite === null || node.speaker === "系統") {
     characterSprite.classList.add("is-hidden");
   } else if (node.sprite) {
-    characterSprite.src = node.sprite;
-    characterSprite.classList.remove("is-hidden");
     
-    // 🚨 這是產生「連動」的關鍵樞紐 🚨
-    // 先把所有可能殘留的成人標籤撕掉，恢復成安妮亞的預設大小 (180vh)
-    characterSprite.classList.remove("char-yoru", "char-loid"); 
-    
-    // 根據講話的人是誰，動態貼上對應的 CSS 標籤
-    if (node.speaker && node.speaker.includes("約兒")) {
-      characterSprite.classList.add("char-yoru"); // 觸發 255vh 放大效果
-    } else if (node.speaker && node.speaker.includes("洛伊德")) {
-      characterSprite.classList.add("char-loid"); // 觸發 276vh 放大效果
+    // 判斷是否需要換新圖 (使用 endsWith 處理絕對路徑與相對路徑)
+    if (!characterSprite.src.endsWith(node.sprite)) {
+      
+      // 1. 先把目前的舊圖片隱藏 (觸發 CSS 的淡出動畫)
+      characterSprite.classList.add("is-hidden");
+      
+      // 清除上一次可能還沒跑完的計時器 (防止玩家狂點造成動畫錯亂)
+      clearTimeout(window.spriteTimeout);
+      
+      // 2. 等待 200 毫秒（淡出差不多了），再偷偷換上新圖片與新尺寸
+      window.spriteTimeout = setTimeout(() => {
+        characterSprite.src = node.sprite;
+        
+        // 重新判定專屬尺寸
+        characterSprite.classList.remove("char-yoru", "char-loid");
+        if (node.speaker && node.speaker.includes("約兒")) {
+          characterSprite.classList.add("char-yoru");
+        } else if (node.speaker && node.speaker.includes("洛伊德")) {
+          characterSprite.classList.add("char-loid");
+        }
+        
+        // 3. 換裝完畢，解除隱藏 (觸發 CSS 的淡入動畫)
+        characterSprite.classList.remove("is-hidden");
+      }, 200);
+
+    } else {
+      // 如果下一句話還是同一張圖，就確保它是顯示狀態就好，不觸發閃爍
+      characterSprite.classList.remove("is-hidden");
     }
   }
 
