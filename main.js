@@ -108,26 +108,39 @@ function updateCharacter(dialogue) {
   avatar.style.backgroundColor = dialogue.avatarColor || "#cccccc";
 }
 
-// 🔽 極簡直球對決版：沒有延遲，完全對照 data.js 瞬間切換
 function updateVisuals(node) {
-  // 1. 遇到沒有立繪、系統、旁白，直接隱藏
-  if (node.sprite === null || node.speaker === "系統" || node.speaker === "旁白") {
+  // 1. 檢查並更新背景
+  if (node.bg) {
+    bgLayer.style.backgroundImage = `url('${node.bg}')`;
+  }
+
+  // 2. 檢查並更新立繪
+  if (node.sprite === null || node.speaker === "系統") {
     characterSprite.classList.add("is-hidden");
-  } 
-  // 2. 只要有指定立繪，立刻更換
-  else if (node.sprite) {
-    // 【第一步】直接把 src 換成 data.js 裡設定的圖片路徑
-    characterSprite.setAttribute("src", node.sprite);
+  } else if (node.sprite) {
+    characterSprite.src = node.sprite;
+    characterSprite.classList.remove("is-hidden");
     
-    // 【第二步】把所有的 class 洗掉，回到最乾淨的狀態 (同時移除了 is-hidden)
-    characterSprite.className = "character-sprite";
+    // 🔽 新增：根據講話的人，動態加上專屬的 CSS Class
+    // 先清除可能殘留的其他角色標籤
+    characterSprite.classList.remove("char-yoru", "char-loid"); 
     
-    // 【第三步】看是誰說話，瞬間貼上對應的放大標籤
+    // 只要說話者名字裡有「約兒」（包含「約兒(心聲)」），就加上約兒專屬標籤
     if (node.speaker && node.speaker.includes("約兒")) {
       characterSprite.classList.add("char-yoru");
     } else if (node.speaker && node.speaker.includes("洛伊德")) {
-      characterSprite.classList.add("char-loid");
+      // 未來如果你想調整洛伊德，也可以比照辦理
+      characterSprite.classList.add("char-loid"); 
     }
+    // 🔼 新增結束
+  }
+
+  // 3. 檢查並更新特寫插圖 (CG)
+  if (node.cg === null) {
+    cgLayer.classList.add("is-hidden");
+  } else if (node.cg) {
+    cgLayer.src = node.cg;
+    cgLayer.classList.remove("is-hidden");
   }
 }
 
