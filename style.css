@@ -322,7 +322,7 @@ h1 { margin: 0; color: var(--ink); font-size: clamp(2.4rem, 7vw, 6rem); font-wei
 /* ---------- 基礎角色立繪（放大 3 倍的安妮亞） ---------- */
 .character-sprite {
   position: absolute;
-  right: 15%; 
+  right: 30%; 
   
   /* 60vh x 3 = 180vh */
   height: 120vh; 
@@ -362,7 +362,7 @@ h1 { margin: 0; color: var(--ink); font-size: clamp(2.4rem, 7vw, 6rem); font-wei
   /* 92vh x 3 = 276vh */
   height: 184vh; 
   /* 往下沉的深度要更深，才能維持與約兒、安妮亞的視覺身高差 */
-  bottom: -120vh; 
+  bottom: -110vh; 
   right: 15%; 
 }
 .key-letter {
