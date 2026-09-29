@@ -322,7 +322,7 @@ h1 { margin: 0; color: var(--ink); font-size: clamp(2.4rem, 7vw, 6rem); font-wei
 /* ---------- 基礎角色立繪（放大 3 倍的安妮亞） ---------- */
 .character-sprite {
   position: absolute;
-  right: 16%; 
+  right: 20%; 
   
   /* 60vh x 3 = 180vh */
   height: 120vh; 
