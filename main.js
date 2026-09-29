@@ -108,7 +108,7 @@ function updateCharacter(dialogue) {
   avatar.style.backgroundColor = dialogue.avatarColor || "#cccccc";
 }
 
-// 🔽 已完美修復的視覺更新函式 (立繪切換、淡入淡出、與角色連動放大)
+// 🔽 最終確定版：完全依據 data.js 指示執行換圖與淡入淡出
 function updateVisuals(node) {
   // 1. 檢查並更新背景 (如有需要可解開註解)
   /*
@@ -122,47 +122,30 @@ function updateVisuals(node) {
     // 遇到旁白或系統，直接隱藏
     characterSprite.classList.add("is-hidden");
   } else if (node.sprite) {
-    // 檢查這次要顯示的圖片，跟目前正在顯示的是不是同一張（使用 pathname 確保精準比對）
-    const currentSpriteSrc = new URL(characterSprite.src, window.location.href).pathname;
-    const targetSpriteSrc = new URL(node.sprite, window.location.href).pathname;
-
-    if (currentSpriteSrc !== targetSpriteSrc) {
-      // 動作 A：先隱藏當前的舊圖片 (觸發 CSS 淡出動畫)
-      characterSprite.classList.add("is-hidden");
+    // 🚨 只要 data.js 有指定圖片，一律執行換裝動畫流程
+    
+    // 動作 A：先隱藏當前的圖片 (觸發 CSS 淡出動畫)
+    characterSprite.classList.add("is-hidden");
+    
+    // 清除計時器防止玩家連點造成錯亂
+    clearTimeout(window.spriteTimeout);
+    
+    // 動作 B：等待 200 毫秒（淡出結束後），再換上指定的圖片與尺寸
+    window.spriteTimeout = setTimeout(() => {
+      // 直接換上 data.js 裡設定好的新圖片
+      characterSprite.setAttribute("src", node.sprite);
       
-      // 清除計時器防止錯亂
-      clearTimeout(window.spriteTimeout);
+      // 終極重置術：直接把 class 洗回最乾淨的狀態，連同 is-hidden 也一併移除
+      characterSprite.className = "character-sprite"; 
       
-      // 動作 B：等待 200 毫秒（淡出結束後），再做換圖與換標籤
-      window.spriteTimeout = setTimeout(() => {
-        // 正式換上新圖片
-        characterSprite.src = node.sprite;
-        
-        // 撕掉舊標籤，恢復預設大小
-        characterSprite.classList.remove("char-yoru", "char-loid"); 
-        
-        // 重新貼上新標籤
-        if (node.speaker && node.speaker.includes("約兒")) {
-          characterSprite.classList.add("char-yoru"); 
-        } else if (node.speaker && node.speaker.includes("洛伊德")) {
-          characterSprite.classList.add("char-loid"); 
-        }
-        
-        // 動作 C：解除隱藏 (觸發 CSS 淡入動畫)
-        characterSprite.classList.remove("is-hidden");
-      }, 200);
-
-    } else {
-      // 如果下一句話還是同一張圖，只需要檢查是不是剛好要換標籤
-      characterSprite.classList.remove("char-yoru", "char-loid"); 
+      // 重新貼上專屬尺寸標籤
       if (node.speaker && node.speaker.includes("約兒")) {
         characterSprite.classList.add("char-yoru"); 
       } else if (node.speaker && node.speaker.includes("洛伊德")) {
         characterSprite.classList.add("char-loid"); 
       }
-      // 確保它是顯示狀態
-      characterSprite.classList.remove("is-hidden");
-    }
+      
+    }, 200);
   }
 
   // 3. 檢查並更新 CG (如有需要可解開註解)
