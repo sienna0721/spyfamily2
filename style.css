@@ -316,17 +316,22 @@ h1 { margin: 0; color: var(--ink); font-size: clamp(2.4rem, 7vw, 6rem); font-wei
   grid-template-columns: repeat(3, 1fr);
   gap: 12px;
 }
+/* ---------- 基礎角色立繪（預設為安妮亞與小孩尺寸） ---------- */
 .character-sprite {
   position: absolute;
-  right: 50%;
-  bottom: 0;
+  right: 12%; 
+  bottom: 0; /* 腳底穩穩踩著，不往下沉 */
   z-index: 1;
-  height: 95vh;
-  max-width: min(42vw, 420px);
+  
+  /* 安妮亞的高度：大約佔螢幕 60% */
+  height: 60vh; 
+  max-width: 65vw; 
+  
   object-fit: contain;
+  object-position: bottom center; /* 確保從腳底開始往上長 */
   opacity: 1;
   transform: translateX(0);
-  transition: opacity .4s ease, transform .4s ease;
+  transition: opacity .4s ease, transform .4s ease, height .4s ease;
   pointer-events: none;
 }
 
@@ -335,6 +340,20 @@ h1 { margin: 0; color: var(--ink); font-size: clamp(2.4rem, 7vw, 6rem); font-wei
   transform: translateX(30px);
   pointer-events: none;
   visibility: visible;
+}
+
+/* ---------- 約兒專屬立繪調整 (char-yoru) ---------- */
+.character-sprite.char-yoru {
+  /* 約兒的高度：大約佔螢幕 85% */
+  height: 85vh; 
+  right: 15%; 
+}
+
+/* ---------- 洛伊德專屬立繪調整 (char-loid) ---------- */
+.character-sprite.char-loid {
+  /* 洛伊德的高度：大約佔螢幕 92% */
+  height: 92vh; 
+  right: 15%; 
 }
 .key-letter {
   min-height: 58px;
