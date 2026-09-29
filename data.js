@@ -80,7 +80,6 @@ export const dialogues = [
   { id: "q2_4", type: "dialogue", speaker: "亨利老師", avatarColor: "#a8d8b9", sprite: null, text: "這是開啟保險箱的密碼線索。現在，我將密碼的『十位數』交給佛傑先生，『個位數』交給安妮亞同學，你們不能直接說出自己手上的數字！只能透過溝通來找出真正的密碼。開始吧！", next: "q2_5" },
   { id: "q2_5", type: "dialogue", speaker: "安妮亞", avatarColor: "#f8c6b5", sprite: assets.sprite.anya_cry, text: "完蛋了！安妮亞只知道最後一個數字，有這麼多選項，根本不知道是哪一個啊！今天還是朔月，不能使用超能力，是安妮亞的大危機！", next: "q2_6" },
   { id: "q2_6", type: "dialogue", speaker: "洛伊德", avatarColor: "#a3c9c7", sprite: assets.sprite.forger_calm, text: "亨利老師，雖然我目前不知道正確密碼是什麼，但我能百分之百確定安妮亞絕對也不知道。", next: "q2_7_1" },
-  
   { id: "q2_7_1", type: "dialogue", speaker: "安妮亞", avatarColor: "#f8c6b5", sprite: assets.sprite.anya_thinking, text: "恩...", next: "q2_7_2" },
   { id: "q2_7_2", type: "dialogue", speaker: "安妮亞", avatarColor: "#f8c6b5", sprite: assets.sprite.anya_smile, text: "原本安妮亞還不知道的，但是聽完父親這句話之後，安妮亞知道密碼是多少了！", next: "q2_9" },
   
