@@ -1,4 +1,4 @@
-import { dialogues } from "./data.js";
+import { dialogues, assets } from "./data.js"; // 🚨 記得把 assets 也 import 進來，因為預載需要讀取它
 
 // 將資料陣列轉成 Map，之後可用 id 快速找到下一個劇情節點。
 const dialogueMap = new Map(dialogues.map((dialogue) => [dialogue.id, dialogue]));
@@ -6,6 +6,23 @@ const dialogueMap = new Map(dialogues.map((dialogue) => [dialogue.id, dialogue])
 // 全域對話歷史與答題統計（新增 q2Mistakes 追蹤第二關）。
 let dialogueHistory = [];
 let playerStats = { q1Mistakes: 0, q2Mistakes: 0 };
+
+// 🔽 🚨 新增：圖片預載機制 (Preload) 
+const preloadedImages = {}; // 存放載入完成的圖片物件
+function preloadAllSprites() {
+  for (const key in assets.sprite) {
+    if (assets.sprite[key]) {
+      const img = new Image();
+      img.src = assets.sprite[key];
+      // 將載入好的圖片物件存起來備用
+      preloadedImages[assets.sprite[key]] = img;
+    }
+  }
+  console.log("✔️ 所有角色立繪已發送預載請求！");
+}
+// 啟動預載
+preloadAllSprites();
+// 🔼 新增結束
 
 // 場景與一般 UI 元素。
 const loadingScene = document.querySelector("#loading-scene");
@@ -40,7 +57,7 @@ const gameCanvas = document.querySelector("#gameCanvas");
 const canvasContext = gameCanvas.getContext("2d");
 const canvasStatus = document.querySelector("#canvas-status");
 
-// 🚨 修正一：修正安妮亞小圖的路徑 (因為你跟 HTML 放同層，不用 images/)
+// 修正一：修正安妮亞小圖的路徑
 let anyaImg = new Image();
 anyaImg.src = "anya_sprite.png"; 
 anyaImg.addEventListener("load", () => {
@@ -109,10 +126,9 @@ function updateCharacter(dialogue) {
   avatar.style.backgroundColor = dialogue.avatarColor || "#cccccc";
 }
 
-// 🔽 修正二：極簡暴力版，且確保大括號正確包覆 CG 判斷
+// 修正二：極簡暴力版
 function updateVisuals(node) {
   // 1. 檢查並更新背景
-  // 如果你有設定 bgLayer 可以把這段解開
   /*
   if (node.bg && typeof bgLayer !== 'undefined') {
     bgLayer.style.backgroundImage = `url('${node.bg}')`;
@@ -121,17 +137,15 @@ function updateVisuals(node) {
 
   // 2. 檢查並更新立繪
   if (node.sprite === null || node.speaker === "系統" || node.speaker === "旁白") {
-    // 遇到旁白、系統，或是明確設定 null，直接隱藏
     characterSprite.classList.add("is-hidden");
   } 
   else if (node.sprite) {
     console.log("準備換上這張圖片：", node.sprite);
-    // 🚨 只要 data.js 有給圖片，不管三七二十一，強制替換！
     
-    // 【關鍵 1】暴力替換 src，強迫瀏覽器讀取新圖片
+    // 【關鍵 1】暴力替換 src
     characterSprite.setAttribute("src", node.sprite);
     
-    // 【關鍵 2】終極重置：把 class 洗回最乾淨的狀態，連 is-hidden 也瞬間拔除
+    // 【關鍵 2】終極重置
     characterSprite.className = "character-sprite";
     
     // 【關鍵 3】根據說話者重新貼上尺寸放大標籤
@@ -143,7 +157,6 @@ function updateVisuals(node) {
   }
 
   // 3. 檢查並更新特寫插圖 (CG)
-  // 🚨 這裡已經正確放回 updateVisuals 的大括號內部了！
   if (typeof cgLayer !== 'undefined') {
     if (node.cg === null) {
       cgLayer.classList.add("is-hidden");
@@ -152,7 +165,7 @@ function updateVisuals(node) {
       cgLayer.classList.remove("is-hidden");
     }
   }
-} // 👈 整個 updateVisuals 函式結束於此
+} 
 
 function dialogueToHtml(text) {
   const tokens = [];
