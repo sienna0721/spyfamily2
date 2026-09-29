@@ -322,12 +322,12 @@ h1 { margin: 0; color: var(--ink); font-size: clamp(2.4rem, 7vw, 6rem); font-wei
 /* ---------- 基礎角色立繪（放大 3 倍的安妮亞） ---------- */
 .character-sprite {
   position: absolute;
-  right: 12%; 
+  right: 50%; 
   
   /* 60vh x 3 = 180vh */
   height: 150vh; 
   /* 圖片太高了，必須往下沉，把臉部拉回螢幕內 */
-  bottom: 0vh; 
+  bottom: -30vh; 
   
   z-index: 1; 
   
@@ -339,13 +339,13 @@ h1 { margin: 0; color: var(--ink); font-size: clamp(2.4rem, 7vw, 6rem); font-wei
   
   opacity: 1;
   transform: translateX(0);
-  transition: opacity .4s ease, transform .4s ease, height .4s ease, bottom .4s ease;
+  transition: opacity .4s ease,  .4s ease, height .4s ease, bottom .4s ease;
   pointer-events: none;
 }
 
 .character-sprite.is-hidden {
   opacity: 0;
-  transform: translateX(30px);
+  
   pointer-events: none;
   visibility: visible;
 }
@@ -353,18 +353,18 @@ h1 { margin: 0; color: var(--ink); font-size: clamp(2.4rem, 7vw, 6rem); font-wei
 /* ---------- 約兒專屬立繪調整 (放大 3 倍) ---------- */
 .character-sprite.char-yoru {
   /* 85vh x 3 = 255vh */
-  height: 212.5vh; 
+  height: 170vh; 
   /* 因為圖片變得超級大，必須把腰部以下全部藏到螢幕底部 */
-  bottom: -145vh; 
+  bottom: -100vh; 
   right: 15%; 
 }
 
 /* ---------- 洛伊德專屬立繪調整 (放大 3 倍) ---------- */
 .character-sprite.char-loid {
   /* 92vh x 3 = 276vh */
-  height: 230vh; 
+  height: 184vh; 
   /* 往下沉的深度要更深，才能維持與約兒、安妮亞的視覺身高差 */
-  bottom: -156vh; 
+  bottom: -120vh; 
   right: 15%; 
 }
 .key-letter {
