@@ -108,7 +108,7 @@ function updateCharacter(dialogue) {
   avatar.style.backgroundColor = dialogue.avatarColor || "#cccccc";
 }
 
-// 🔽 最終確定版：完全依據 data.js 指示執行換圖與淡入淡出
+// 🔽 最終強制換圖版：徹底解決圖片卡住與尺寸殘留問題
 function updateVisuals(node) {
   // 1. 檢查並更新背景 (如有需要可解開註解)
   /*
@@ -122,20 +122,21 @@ function updateVisuals(node) {
     // 遇到旁白或系統，直接隱藏
     characterSprite.classList.add("is-hidden");
   } else if (node.sprite) {
-    // 🚨 只要 data.js 有指定圖片，一律執行換裝動畫流程
     
-    // 動作 A：先隱藏當前的圖片 (觸發 CSS 淡出動畫)
+    // 動作 A：先隱藏當前的舊圖片 (觸發 CSS 淡出動畫)
     characterSprite.classList.add("is-hidden");
     
-    // 清除計時器防止玩家連點造成錯亂
+    // 清除計時器防止錯亂
     clearTimeout(window.spriteTimeout);
     
-    // 動作 B：等待 200 毫秒（淡出結束後），再換上指定的圖片與尺寸
+    // 動作 B：等待 200 毫秒（淡出結束後），再做換圖與換標籤
     window.spriteTimeout = setTimeout(() => {
-      // 直接換上 data.js 裡設定好的新圖片
-      characterSprite.setAttribute("src", node.sprite);
       
-      // 終極重置術：直接把 class 洗回最乾淨的狀態，連同 is-hidden 也一併移除
+      // 🚨 強制換圖核心：使用 getTime() 產生時間戳記，迫使瀏覽器重新載入圖片
+      const forceReloadUrl = `${node.sprite}?t=${new Date().getTime()}`;
+      characterSprite.setAttribute("src", forceReloadUrl);
+      
+      // 🚨 終極重置術：直接把 class 洗回最乾淨的狀態，連 is-hidden 都移除
       characterSprite.className = "character-sprite"; 
       
       // 重新貼上專屬尺寸標籤
@@ -147,18 +148,6 @@ function updateVisuals(node) {
       
     }, 200);
   }
-
-  // 3. 檢查並更新 CG (如有需要可解開註解)
-  /*
-  if (typeof cgLayer !== 'undefined') {
-    if (node.cg === null) {
-      cgLayer.classList.add("is-hidden");
-    } else if (node.cg) {
-      cgLayer.src = node.cg;
-      cgLayer.classList.remove("is-hidden");
-    }
-  }
-  */
 }
 // 🔼 視覺更新函式結束
 
