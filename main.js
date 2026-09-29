@@ -40,8 +40,9 @@ const gameCanvas = document.querySelector("#gameCanvas");
 const canvasContext = gameCanvas.getContext("2d");
 const canvasStatus = document.querySelector("#canvas-status");
 
+// 🚨 修正一：修正安妮亞小圖的路徑 (因為你跟 HTML 放同層，不用 images/)
 let anyaImg = new Image();
-anyaImg.src = "images/anya_sprite.png";
+anyaImg.src = "anya_sprite.png"; 
 anyaImg.addEventListener("load", () => {
   if (patrolState.active) drawPatrolMap();
 });
@@ -108,7 +109,7 @@ function updateCharacter(dialogue) {
   avatar.style.backgroundColor = dialogue.avatarColor || "#cccccc";
 }
 
-// 🔽 極簡暴力版：完全照 data.js 強制執行，瞬間換圖
+// 🔽 修正二：極簡暴力版，且確保大括號正確包覆 CG 判斷
 function updateVisuals(node) {
   // 1. 檢查並更新背景
   // 如果你有設定 bgLayer 可以把這段解開
@@ -139,16 +140,18 @@ function updateVisuals(node) {
       characterSprite.classList.add("char-loid"); 
     }
   }
-}
 
   // 3. 檢查並更新特寫插圖 (CG)
-  if (node.cg === null) {
-    cgLayer.classList.add("is-hidden");
-  } else if (node.cg) {
-    cgLayer.src = node.cg;
-    cgLayer.classList.remove("is-hidden");
+  // 🚨 這裡已經正確放回 updateVisuals 的大括號內部了！
+  if (typeof cgLayer !== 'undefined') {
+    if (node.cg === null) {
+      cgLayer.classList.add("is-hidden");
+    } else if (node.cg) {
+      cgLayer.src = node.cg;
+      cgLayer.classList.remove("is-hidden");
+    }
   }
-
+} // 👈 整個 updateVisuals 函式結束於此
 
 function dialogueToHtml(text) {
   const tokens = [];
