@@ -125,6 +125,7 @@ function updateVisuals(node) {
     characterSprite.classList.add("is-hidden");
   } 
   else if (node.sprite) {
+    console.log("準備換上這張圖片：", node.sprite);
     // 🚨 只要 data.js 有給圖片，不管三七二十一，強制替換！
     
     // 【關鍵 1】暴力替換 src，強迫瀏覽器讀取新圖片
