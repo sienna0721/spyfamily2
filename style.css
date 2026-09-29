@@ -322,12 +322,12 @@ h1 { margin: 0; color: var(--ink); font-size: clamp(2.4rem, 7vw, 6rem); font-wei
 /* ---------- 基礎角色立繪（放大 3 倍的安妮亞） ---------- */
 .character-sprite {
   position: absolute;
-  right: 50%; 
+  right: 15%; 
   
   /* 60vh x 3 = 180vh */
   height: 120vh; 
   /* 圖片太高了，必須往下沉，把臉部拉回螢幕內 */
-  bottom: -30vh; 
+  bottom: -15vh; 
   
   z-index: 1; 
   
@@ -336,10 +336,8 @@ h1 { margin: 0; color: var(--ink); font-size: clamp(2.4rem, 7vw, 6rem); font-wei
   
   object-fit: contain;
   object-position: bottom center; 
-  
   opacity: 1;
-  transform: translateX(0);
-  transition: opacity .4s ease,  .4s ease, height .4s ease, bottom .4s ease;
+  transition: opacity .4s ease;
   pointer-events: none;
 }
 
