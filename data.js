@@ -59,7 +59,7 @@ export const dialogues = [
     // 🔽 啟動三人立繪同台 🔽
     sprites: {
       left: assets.sprite.yoru_calm,
-      center: assets.sprite.anya_scared,
+      center: assets.sprite.anya_smile,
       right: assets.sprite.forger_polite
     },
     text: "佛傑一家，你們的外表與禮儀確實無可挑惕，但伊甸學園要培育的，是能在未來的真實社會中解決問題的菁英。真正的優雅，絕非在紙上死背公式，而是能在實作與生活經驗中，展現出完美無缺的邏輯推演！這才是我們學校該有的模樣！", 
