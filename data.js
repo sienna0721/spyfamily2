@@ -70,8 +70,8 @@ export const dialogues = [
   { id: "q1_wrong_season", type: "dialogue", speaker: "洛伊德", avatarColor: "#a3c9c7", sprite: assets.sprite.forger_calm, text: "分進四個季節，只能證明『有人同一個季節』，但一個季節有三個月，不一定會同月份。我們換個『籠子』來裝裝看？", next: "q1_choice" },
   { id: "q1_correct", type: "dialogue", speaker: "洛伊德", avatarColor: "#a3c9c7", sprite: assets.sprite.forger_polite, text: "亨利老師，這非常合理，一年只有 12 個月，就像 12 個籠子；而 13 位考生就像 13 隻鴿子。當鴿子數量大於籠子時，必定有一個籠子會擠進兩隻以上的鴿子。這就是大部分人熟知的『鴿籠定理』。", next: "q1_4" },
   { id: "q1_4", type: "dialogue", speaker: "亨利老師", avatarColor: "#a8d8b9", sprite: null, text: "沒錯！非常優雅的回答！看來你對生活中的數學邏輯瞭若指掌，但接下來的問題可就沒那麼平易近人了，就讓我看看你們能否保持從容吧！此外，我希望這道題能讓安妮亞同學回答看看。", next: "q1_5" },
-  { id: "q1_5", type: "dialogue", speaker: "安妮亞", avatarColor: "#f8c6b5", sprite: assets.sprite.anya_scared, text: "誒！？我嗎？", next: "q1_6" },
-  { id: "q1_6", type: "dialogue", speaker: "洛伊德（心聲）", avatarColor: "#a3c9c7", sprite: assets.sprite.forger_surprise, text: "糟了，若是只要我回答還能應付，要安妮亞思考會不會太強人所難了，畢竟在練習面試時沒想過會出這種題目啊！只好請老師讓我一同參與了。", next: "q2_1" },
+  { id: "q1_5", type: "dialogue", speaker: "安妮亞", avatarColor: "#f8c6b5", sprite: assets.sprite.anya_cry, text: "誒！？我嗎？", next: "q1_6" },
+  { id: "q1_6", type: "dialogue", speaker: "洛伊德（心聲）", avatarColor: "#a3c9c7", sprite: assets.sprite.forger_strict, text: "糟了，若是只要我回答還能應付，要安妮亞思考會不會太強人所難了，畢竟在練習面試時沒想過會出這種題目啊！只好請老師讓我一同參與了。", next: "q2_1" },
 
   // --- 第二關：保險箱密碼 ---
   { id: "q2_1", type: "dialogue", speaker: "洛伊德", avatarColor: "#a3c9c7", sprite: assets.sprite.forger_polite, text: "亨利老師，既然是測試我們『一家人』的從容與默契，是否能讓我們以家庭為單位，共同面對這項挑戰呢？", next: "q2_2" },
