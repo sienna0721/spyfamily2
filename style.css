@@ -67,11 +67,10 @@ h1 { margin: 0; color: var(--ink); font-size: clamp(2.4rem, 7vw, 6rem); font-wei
 
 /* Dialogue Scene：以手繪紙張對話框承載下方對話，上方保留場景與立繪佔位。 */
 .scene--dialogue { display: flex; flex-direction: column; justify-content: flex-end; background: var(--paper-deep); }
-.scene-backdrop { position: absolute; inset: 0 0 31%; overflow: hidden; background: linear-gradient(180deg, #cde7dc, #f8d7c8 64%, #ead6c2); }
+.scene-backdrop { position: absolute; inset: 0 ; overflow: hidden; background: linear-gradient(180deg, #cde7dc, #f8d7c8 64%, #ead6c2); }
 .scene-backdrop::after { position: absolute; inset: 0; background: linear-gradient(180deg, transparent 45%, rgba(91, 89, 96, .16)); content: ""; }
 .backdrop-skyline { position: absolute; right: 0; bottom: 0; left: 0; height: 44%; background: repeating-linear-gradient(90deg, #bad5c3 0 90px, #d6e3c6 90px 140px, #b4ccbc 140px 230px); clip-path: polygon(0 38%, 10% 18%, 22% 32%, 32% 4%, 45% 28%, 58% 10%, 71% 35%, 81% 8%, 100% 22%, 100% 100%, 0 100%); opacity: .8; }
 .placeholder-copy { position: absolute; top: 17%; width: 100%; color: rgba(91, 89, 96, .48); font-size: clamp(1rem, 3vw, 2rem); font-weight: 800; letter-spacing: .25em; text-align: center; }
-.character-placeholder { position: absolute; right: 10%; bottom: 0; z-index: 1; display: grid; place-items: center; width: clamp(130px, 24vw, 280px); height: 72%; border: 2px dashed rgba(91, 89, 96, .42); border-bottom: 0; border-radius: 50% 50% 0 0; color: rgba(91, 89, 96, .64); background: rgba(253, 251, 247, .32); font-size: .9rem; letter-spacing: .14em; }
 .interaction-layer { position: absolute; inset: 0; z-index: 3; display: grid; place-items: center; padding: 4vh 20px 31vh; pointer-events: none; }
 .interaction-panel { width: min(720px, 100%); pointer-events: auto; }
 .choice-panel { display: grid; gap: 14px; }
@@ -463,7 +462,7 @@ h1 { margin: 0; color: var(--ink); font-size: clamp(2.4rem, 7vw, 6rem); font-wei
 @keyframes fade-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
 @media (max-width: 600px) {
-  .scene-backdrop { inset: 0 0 39%; }
+  .scene-backdrop { inset: 0; }
   .interaction-layer { padding-bottom: 39vh; }
   .dialogue-box { min-height: 220px; margin-bottom: 14px; padding: 20px 20px 28px; }
   .dialogue-header { align-items: flex-start; flex-direction: column; gap: 6px; }
