@@ -31,6 +31,9 @@ const speakerName = document.querySelector("#speaker-name");
 const dialogueText = document.querySelector("#dialogue-text");
 const avatar = document.querySelector("#avatar");
 
+// 🔽 抓取背景圖層 DOM 元素 🔽
+const bgLayer = document.querySelector("#bg-layer");
+
 // 🔽 抓取新的三人立繪 DOM 元素 🔽
 const spriteLeft = document.querySelector("#sprite-left");
 const spriteCenter = document.querySelector("#sprite-center");
@@ -152,6 +155,11 @@ function updateSingleSprite(element, imagePath) {
 
 // 🔽 更新整體視覺 (三人舞台版) 🔽
 function updateVisuals(node) {
+  // 🔽 1. 檢查並更新背景 (已解除封印) 🔽
+  if (node.bg && typeof bgLayer !== 'undefined') {
+    bgLayer.style.backgroundImage = `url('${node.bg}')`;
+  }
+
   const hasSprites = Boolean(node.sprites);
   const hasSingleSprite = Boolean(node.sprite);
 
@@ -159,25 +167,25 @@ function updateVisuals(node) {
     node.speaker === "系統" ||
     node.speaker === "旁白";
 
-  // 1. 若是系統或旁白且沒有強制指定圖片，全部隱藏
+  // 2. 若是系統或旁白且沒有強制指定圖片，全部隱藏
   if (isSystemNarration && !hasSprites && !hasSingleSprite) {
     updateSingleSprite(spriteLeft, null);
     updateSingleSprite(spriteCenter, null);
     updateSingleSprite(spriteRight, null);
   } 
-  // 2. 啟動多人同台模式 (sprites 物件)
+  // 3. 啟動多人同台模式 (sprites 物件)
   else if (hasSprites) {
     updateSingleSprite(spriteLeft, node.sprites.left);
     updateSingleSprite(spriteCenter, node.sprites.center);
     updateSingleSprite(spriteRight, node.sprites.right);
   } 
-  // 3. 相容舊版的單人模式 (sprite 字串) -> 放在中間
+  // 4. 相容舊版的單人模式 (sprite 字串) -> 放在中間
   else if (hasSingleSprite) {
     updateSingleSprite(spriteLeft, null);
     updateSingleSprite(spriteCenter, node.sprite);
     updateSingleSprite(spriteRight, null);
   } 
-  // 4. 什麼都沒有，全部清空
+  // 5. 什麼都沒有，全部清空
   else {
     updateSingleSprite(spriteLeft, null);
     updateSingleSprite(spriteCenter, null);
