@@ -149,6 +149,7 @@ export const dialogues = [
   // --- 第四關：最後的大門 ---
   { id: "q4_1", type: "dialogue", speaker: "亨利老師", avatarColor: "#a8d8b9", text: "你們一家人的表現真的非常出色，我很想讓你們馬上通過，不過按照規定，還是得要你們通過最後一關才能錄取。", next: "q4_2" },
   { id: "q4_2", type: "dialogue", speaker: "亨利老師", avatarColor: "#a8d8b9", text: "那麼，請跟我來。", next: "q4_3" },
+  // --- 前面劇情維持不變 ---
   { id: "q4_3", type: "dialogue", speaker: "旁白", avatarColor: "#ccc", bg: assets.bg.password_input, sprite: null, text: "亨利老師帶著佛傑一家來到一扇鐵門前。大門上似乎有幾個引人注目的東西……", next: "q4_investigate" },
 
   {
@@ -157,20 +158,26 @@ export const dialogues = [
     bg: assets.bg.password_input,
     sprite: null, // 調查時隱藏角色立繪，讓玩家專心找線索
     items: [
-      { id: "sign", label: "⚠️ 警告標語", top: "18%", left: "59%", next: "q4_sign" },
-      { id: "star", label: "⭐", top: "25%", left: "77%", next: "q4_star_1" },
-      { id: "keypad", label: "KFRNQD", top: "38%", left: "59%", next: "q4_keypad_intro" },
+      // 💡 將 label 統一改成放大鏡，配合 CSS 的發光動畫
+      // (top 和 left 座標請依照你的真實背景圖再微調)
+      { id: "sign", label: "🔍", top: "18%", left: "59%", next: "q4_sign" },
+      { id: "star", label: "🔍", top: "25%", left: "77%", next: "q4_star_1" },
+      { id: "keypad", label: "🔍", top: "38%", left: "59%", next: "q4_keypad_intro" },
     ],
   },
 
-  { id: "q4_sign", type: "dialogue", speaker: "洛伊德", avatarColor: "#a3c9c7", sprite: assets.sprite.forger_calm, text: "『僅限輸入2次，錯誤即刻淘汰』……看來不能隨便用窮舉法亂猜，必須找到確切的密鑰。", next: "q4_investigate" },
+  // 【線索 1：警告標語 - 建立限制與目標】
+  { id: "q4_sign", type: "dialogue", speaker: "洛伊德", avatarColor: "#a3c9c7", sprite: assets.sprite.forger_calm, text: "『僅限輸入 2 次，錯誤即刻淘汰』……看來不能隨便用窮舉法亂猜。我們必須在門上找到確切的『密鑰數字』才行。", next: "q4_investigate" },
 
+  // 【線索 2：星星 - 提供變數】
   { id: "q4_star_1", type: "dialogue", speaker: "安妮亞", avatarColor: "#f8c6b5", sprite: assets.sprite.anya_smile, text: "父親大人！你看門上那個星星！跟安妮亞想要拿到的『星星』長的一樣！", next: "q4_star_2" },
-  { id: "q4_star_2", type: "dialogue", speaker: "安妮亞", avatarColor: "#f8c6b5", text: "安妮亞數過好多次了，那個星星有 5 個尖角喔！", next: "q4_star_3" },
-  { id: "q4_star_3", type: "dialogue", speaker: "洛伊德", avatarColor: "#a3c9c7", sprite: assets.sprite.forger_calm, text: "星星的 5 個角？……難道亨利老師把密鑰直接藏在視覺圖像裡了？", next: "q4_star_4" },
-  { id: "q4_star_4", type: "dialogue", speaker: "洛伊德", avatarColor: "#a3c9c7", text: "好，安妮亞，我們就用妳發現的『5』來試試看！把這串字母全部往前推算 5 個字母……", next: "q4_investigate" },
+  { id: "q4_star_2", type: "dialogue", speaker: "安妮亞", avatarColor: "#f8c6b5", text: "而且安妮亞數過了，這個星星有 5 個角耶！", next: "q4_star_3" },
+  { id: "q4_star_3", type: "dialogue", speaker: "洛伊德（心聲）", avatarColor: "#a3c9c7", sprite: assets.sprite.forger_strict, text: "5 個角？……特地貼在密碼門旁邊，這數字絕對不是巧合，得把它記下來。", next: "q4_investigate" }, 
   
-  { id: "q4_keypad_intro", type: "dialogue", speaker: "洛伊德", avatarColor: "#a3c9c7", sprite: assets.sprite.forger_calm, text: "這是凱撒加密法。將原本的英文字母往後平移替換。我現在必須輸入確切的密碼，才能把門打開。", next: "q4_keypad" },
+  // 【線索 3：密碼盤 - 以間諜口吻說明機制】
+  { id: "q4_keypad_intro", type: "dialogue", speaker: "洛伊德", avatarColor: "#a3c9c7", sprite: assets.sprite.forger_calm, text: "螢幕上顯示著『KFRNQD』。這是經典的『凱薩加密法』。", next: "q4_keypad_intro_2" },
+  { id: "q4_keypad_intro_2", type: "dialogue", speaker: "約兒", avatarColor: "#d9c9e8", sprite: assets.sprite.yoru_calm, text: "洛伊德先生，請問什麼是凱薩加密法呢？", next: "q4_keypad_intro_3" },
+  { id: "q4_keypad_intro_3", type: "dialogue", speaker: "洛伊德", avatarColor: "#a3c9c7", sprite: assets.sprite.forger_polite, text: "就是將原本的英文字母，在字母表上『往後平移了固定的位數』。只要我們能在門上找到代表『平移位數』的數字線索，把這串亂碼往前推算回去，就能知道真正的密碼了！（若還沒收集完線索，可點擊背景空白處退回調查模式）", next: "q4_keypad" },
 
   {
     id: "q4_keypad",
@@ -178,8 +185,11 @@ export const dialogues = [
     correct: "FAMILY",
     nextCorrect: "q4_correct",
     nextWrong: "q4_wrong",
-    cancel: "q4_investigate"
+    cancel: "q4_investigate" // 玩家可以隨時退回去看星星
   },
+  // --- 後續結局維持不變 ---
+
+
 
   { id: "q4_wrong", type: "dialogue", speaker: "系統", avatarColor: "#ccc", sprite: null, text: "【警告：密碼錯誤，防盜機制啟動。】", next: "q4_wrong_2" },
   { id: "q4_wrong_2", type: "dialogue", speaker: "洛伊德", avatarColor: "#a3c9c7", sprite: assets.sprite.forger_strict, text: "等等，剛剛輸入太快按錯了，這是最後一次機會，必須正確輸入！", next: "q4_keypad" },
