@@ -65,7 +65,7 @@ h1 { margin: 0; color: var(--ink); font-size: clamp(2.4rem, 7vw, 6rem); font-wei
 .title-decoration--right { right: 14%; bottom: 26%; color: var(--mint-deep); animation-delay: -1.5s; }
 .game-footer { position: absolute; right: 16px; bottom: 14px; left: 16px; color: rgba(91, 89, 96, .58); font-size: .7rem; text-align: center; }
 
-/* Dialogue Scene：以手繪紙張對話框承載下方對話，上方保留場景與立繪佔位。 */
+/* Dialogue Scene */
 .scene--dialogue { display: flex; flex-direction: column; justify-content: flex-end; background: var(--paper-deep); }
 .scene-backdrop { position: absolute; inset: 0 ; overflow: hidden; background: linear-gradient(180deg, #cde7dc, #f8d7c8 64%, #ead6c2); }
 .scene-backdrop::after { position: absolute; inset: 0; background: linear-gradient(180deg, transparent 45%, rgba(91, 89, 96, .16)); content: ""; }
@@ -82,10 +82,63 @@ h1 { margin: 0; color: var(--ink); font-size: clamp(2.4rem, 7vw, 6rem); font-wei
 .keypad-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
 .keypad-button { padding: 14px 10px; color: var(--ink); background: var(--butter); font-size: 1.15rem; font-weight: 900; }
 .keypad-button:nth-child(2n) { background: var(--peach); }
-.dialogue-box { position: relative; z-index: 2; width: min(1080px, calc(100% - 32px)); min-height: 190px; margin: 0 auto 28px; padding: 25px 32px 30px; border: 1.5px solid var(--line); border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px; background: rgba(253, 251, 247, .96); box-shadow: 4px 7px 0 rgba(102, 82, 74, .12), 0 12px 30px var(--shadow); cursor: pointer; outline: none; }
+
+/* ==========================================
+   對話框與側邊頭像排版 (Visual Novel Style)
+   ========================================== */
+.dialogue-container {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: flex-end; 
+  width: min(1080px, calc(100% - 32px));
+  margin: 0 auto 28px;
+  gap: 16px; 
+}
+
+.dialogue-avatar {
+  flex: 0 0 auto;
+  width: 180px;      
+  height: 240px;     
+  object-fit: cover; 
+  object-position: top center; 
+  border: 3px solid rgba(253, 251, 247, 0.8);
+  border-radius: 12px;
+  background-color: var(--mint); 
+  box-shadow: 4px 7px 0 rgba(102, 82, 74, .12), 0 12px 30px var(--shadow);
+  transition: opacity 0.3s ease;
+}
+
+.dialogue-avatar.is-hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.dialogue-box {
+  flex: 1; 
+  position: relative;
+  min-height: 190px;
+  padding: 25px 32px 30px; 
+  border: 1.5px solid var(--line); 
+  border-radius: 24px 15px 24px 15px; 
+  background: rgba(253, 251, 247, .96); 
+  box-shadow: 4px 7px 0 rgba(102, 82, 74, .12), 0 12px 30px var(--shadow); 
+  cursor: pointer; 
+  outline: none; 
+}
+
 .dialogue-box:focus-visible { box-shadow: 0 0 0 3px rgba(168, 216, 185, .85), 4px 7px 0 rgba(102, 82, 74, .12); }
-.avatar { position: absolute; top: -27px; left: 28px; display: grid; place-items: center; width: 70px; height: 70px; border: 1.5px solid var(--line); border-radius: 24px 10px 20px 12px; color: var(--ink); background: var(--mint); box-shadow: 3px 4px 0 rgba(102, 82, 74, .14); font-size: 1.7rem; font-weight: 900; }
-.dialogue-header { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-bottom: 12px; padding-left: 76px; border-bottom: 1px dashed rgba(91, 89, 96, .32); }
+
+.dialogue-header { 
+  display: flex; 
+  align-items: center; 
+  justify-content: space-between; 
+  gap: 16px; 
+  padding-bottom: 12px; 
+  padding-left: 0; 
+  border-bottom: 1px dashed rgba(91, 89, 96, .32); 
+}
+
 .speaker-name { color: var(--mint-deep); font-size: 1.25rem; font-weight: 900; }
 .dialogue-hint { color: var(--ink-soft); font-size: .75rem; }
 .dialogue-text { min-height: 3.4em; margin: 20px 0 0; color: var(--ink); font-size: clamp(1rem, 2vw, 1.25rem); line-height: 1.9; letter-spacing: .05em; }
@@ -180,92 +233,65 @@ h1 { margin: 0; color: var(--ink); font-size: clamp(2.4rem, 7vw, 6rem); font-wei
   cursor: pointer;
   font-weight: 900;
 }
-/* 第四關：點擊調查大門場景 */
+
+/* ==========================================
+   第四關：全螢幕點擊調查大門場景
+   ========================================== */
+.investigation-panel {
+  position: fixed !important; 
+  inset: 0;
+  width: 100% !important;
+  height: 100% !important;
+  max-width: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  z-index: 5;
+}
+
 .investigation-door {
-  position: relative;
-  width: min(480px, calc(100% - 32px));
-  height: 320px;
-  margin: 0 auto;
-  overflow: hidden;
-  border: 1.5px solid var(--line);
-  border-radius: 34px 14px 30px 18px / 18px 30px 14px 34px;
-  background:
-    radial-gradient(circle at 18% 22%, rgba(248, 228, 168, .16), transparent 24%),
-    radial-gradient(circle at 78% 30%, rgba(217, 201, 232, .13), transparent 22%),
-    repeating-linear-gradient(
-      96deg,
-      rgba(253, 251, 247, .05) 0 3px,
-      transparent 3px 10px
-    ),
-    linear-gradient(145deg, #5b5960, #3f3d44 58%, #6c625f);
-  box-shadow:
-    4px 7px 0 rgba(102, 82, 74, .14),
-    0 16px 28px var(--shadow);
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  border-radius: 0;
 }
 
 .investigation-door::after {
-  position: absolute;
-  inset: 12px;
-  border: 1px dashed rgba(253, 251, 247, .26);
-  border-radius: 26px 10px 24px 14px / 14px 24px 10px 26px;
-  pointer-events: none;
-  content: "";
+  display: none;
 }
 
+/* ==========================================
+   調查點：發光放大鏡
+   ========================================== */
 .investigate-btn {
   position: absolute;
   z-index: 1;
   cursor: pointer;
-  transition:
-    transform 180ms ease,
-    filter 180ms ease,
-    box-shadow 180ms ease,
-    text-shadow 180ms ease;
+  
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+  
+  font-size: 2.8rem;
+  
+  animation: icon-glow 1.5s ease-in-out infinite alternate;
+  transition: transform 180ms ease;
 }
 
 .investigate-btn:hover,
 .investigate-btn:focus-visible {
-  transform: scale(1.06) rotate(-.5deg);
-  filter: brightness(1.08) saturate(1.08);
+  transform: scale(1.15) rotate(5deg);
   outline: none;
 }
 
-.btn-star {
-  border: 0;
-  color: var(--butter);
-  background: transparent;
-  font-size: 2.1rem;
-  font-weight: 900;
-  text-shadow:
-    0 0 8px rgba(248, 228, 168, .82),
-    0 0 18px rgba(248, 228, 168, .48);
-}
-
-.btn-keypad {
-  padding: 11px 15px;
-  border: 1.5px solid var(--line);
-  border-radius: 80px 12px 70px 14px / 14px 70px 12px 80px;
-  color: var(--ink);
-  background: var(--paper-deep);
-  box-shadow:
-    3px 5px 0 rgba(102, 82, 74, .12),
-    0 10px 18px var(--shadow);
-  font-family: "Courier New", "Nunito", monospace;
-  font-weight: 900;
-  letter-spacing: .08em;
-}
-
-.btn-sign {
-  padding: 10px 16px;
-  border: 1.5px solid rgba(253, 251, 247, .52);
-  border-radius: 18px 8px 16px 10px / 10px 16px 8px 18px;
-  color: var(--paper);
-  background: var(--peach-deep);
-  box-shadow:
-    3px 5px 0 rgba(72, 56, 52, .18),
-    0 10px 18px rgba(102, 82, 74, .18);
-  font-weight: 900;
-  letter-spacing: .1em;
+@keyframes icon-glow {
+  0% { filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.6)); }
+  100% { filter: drop-shadow(0 0 16px rgba(248, 228, 168, 1)) drop-shadow(0 0 8px rgba(255, 255, 255, 0.9)); }
 }
 
 .success-image {
@@ -346,8 +372,9 @@ h1 { margin: 0; color: var(--ink); font-size: clamp(2.4rem, 7vw, 6rem); font-wei
 }
 
 #sprite-left {
-  left: -5%;
+  left: 20%;
   right: auto;
+  transform: translateX(-50%);
 }
 
 #sprite-center {
@@ -357,11 +384,11 @@ h1 { margin: 0; color: var(--ink); font-size: clamp(2.4rem, 7vw, 6rem); font-wei
 }
 
 #sprite-right {
-  right: -5%;
-  left: auto;
+  left: 80%;
+  right: auto;
+  transform: translateX(-50%);
 }
 
-/* ⚠️ 注意這裡已經移除了 right 屬性，避免覆蓋定位 */
 .character-sprite.char-yoru {
   height: 170vh;
   bottom: -100vh;
@@ -424,33 +451,17 @@ h1 { margin: 0; color: var(--ink); font-size: clamp(2.4rem, 7vw, 6rem); font-wei
 }
 
 @keyframes unlock-pulse {
-  0% {
-    transform: scale(1);
-  }
-  45% {
-    transform: scale(1.08);
-  }
-  100% {
-    transform: scale(1);
-  }
+  0% { transform: scale(1); }
+  45% { transform: scale(1.08); }
+  100% { transform: scale(1); }
 }
 
 @keyframes shake {
-  0%, 100% {
-    transform: translateX(0);
-  }
-  20% {
-    transform: translateX(-7px);
-  }
-  40% {
-    transform: translateX(6px);
-  }
-  60% {
-    transform: translateX(-5px);
-  }
-  80% {
-    transform: translateX(4px);
-  }
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-7px); }
+  40% { transform: translateX(6px); }
+  60% { transform: translateX(-5px); }
+  80% { transform: translateX(4px); }
 }
 @keyframes spin-star { to { transform: rotate(360deg); } }
 @keyframes pencil-glow { from { text-shadow: 0 0 5px var(--peach); } to { text-shadow: 0 0 24px var(--peach); } }
@@ -464,7 +475,9 @@ h1 { margin: 0; color: var(--ink); font-size: clamp(2.4rem, 7vw, 6rem); font-wei
 @media (max-width: 600px) {
   .scene-backdrop { inset: 0; }
   .interaction-layer { padding-bottom: 39vh; }
-  .dialogue-box { min-height: 220px; margin-bottom: 14px; padding: 20px 20px 28px; }
+  .dialogue-container { flex-direction: column; align-items: flex-start; gap: 8px; }
+  .dialogue-avatar { width: 120px; height: 160px; margin-left: 16px; margin-bottom: -20px; z-index: 3; }
+  .dialogue-box { min-height: 180px; padding: 20px 20px 28px; width: 100%; }
   .dialogue-header { align-items: flex-start; flex-direction: column; gap: 6px; }
   .character-placeholder { right: 5%; height: 60%; }
   .game-footer { font-size: .62rem; }
