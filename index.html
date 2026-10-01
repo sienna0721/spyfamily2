@@ -39,7 +39,7 @@
 
       <!-- Dialogue Scene：第一階段只處理視覺小說對話與打字機互動。 -->
       <section id="dialogue-scene" class="scene scene--dialogue is-hidden" aria-label="劇情對話">
-        <!-- 🔽 修改此處：加上 bg-layer 並清空裡面的裝飾線條與文字 🔽 -->
+        <!-- 🔽 背景圖層 🔽 -->
         <div id="bg-layer" class="scene-backdrop" aria-label="情境背景圖">
           <div class="character-placeholder" aria-label="角色立繪佔位區">角色立繪</div>
         </div>
@@ -60,21 +60,26 @@
         <canvas id="gameCanvas" width="600" height="400" hidden aria-label="校園巡邏地圖"></canvas>
         <div id="canvas-status" class="canvas-status" hidden aria-live="assertive"></div>
 
-        <!-- 🔽 修改為三人舞台結構 🔽 -->
+        <!-- 🔽 全螢幕三人舞台結構 🔽 -->
         <div id="character-stage" class="character-stage" aria-label="角色立繪舞台">
           <img id="sprite-left" class="character-sprite is-hidden" alt="">
           <img id="sprite-center" class="character-sprite is-hidden" alt="">
           <img id="sprite-right" class="character-sprite is-hidden" alt="">
         </div>
 
-        <div id="dialogue-box" class="dialogue-box" role="button" tabindex="0" aria-label="對話框，點擊或按空白鍵繼續">
-          <div id="avatar" class="avatar" aria-hidden="true">?</div>
-          <div class="dialogue-header">
-            <span id="speaker-name" class="speaker-name">—</span>
-            <span class="dialogue-hint">點擊或按空白鍵繼續</span>
+        <!-- 🔽 將對話框與側邊頭像包裝在一起 🔽 -->
+        <div id="dialogue-container" class="dialogue-container">
+          <!-- 側邊大頭像 -->
+          <img id="dialogue-avatar" class="dialogue-avatar is-hidden" alt="說話者頭像">
+          
+          <div id="dialogue-box" class="dialogue-box" role="button" tabindex="0" aria-label="對話框，點擊或按空白鍵繼續">
+            <div class="dialogue-header">
+              <span id="speaker-name" class="speaker-name">—</span>
+              <span class="dialogue-hint">點擊或按空白鍵繼續</span>
+            </div>
+            <p id="dialogue-text" class="dialogue-text"></p>
+            <span class="continue-indicator" aria-hidden="true">▼</span>
           </div>
-          <p id="dialogue-text" class="dialogue-text"></p>
-          <span class="continue-indicator" aria-hidden="true">▼</span>
         </div>
 
         <!-- 預設以 display: none 隱藏，開啟時由 main.js 加上 modal-open。 -->
