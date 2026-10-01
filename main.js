@@ -26,10 +26,13 @@ const loadingScene = document.querySelector("#loading-scene");
 const titleScene = document.querySelector("#title-scene");
 const dialogueScene = document.querySelector("#dialogue-scene");
 const startButton = document.querySelector("#start-button");
+
+// 🔽 抓取新的對話容器與側邊頭像 🔽
+const dialogueContainer = document.querySelector("#dialogue-container");
 const dialogueBox = document.querySelector("#dialogue-box");
+const dialogueAvatar = document.querySelector("#dialogue-avatar");
 const speakerName = document.querySelector("#speaker-name");
 const dialogueText = document.querySelector("#dialogue-text");
-const avatar = document.querySelector("#avatar");
 
 // 🔽 抓取背景圖層 DOM 元素 🔽
 const bgLayer = document.querySelector("#bg-layer");
@@ -122,10 +125,23 @@ function hideInteractionPanels() {
   investigationPanel.classList.add("is-hidden");
 }
 
+// 🔽 修改：更新角色對話頭像 (只有第四關才會啟用) 🔽
 function updateCharacter(dialogue) {
   speakerName.textContent = dialogue.speaker;
-  avatar.textContent = dialogue.speaker?.charAt(0) || "?";
-  avatar.style.backgroundColor = dialogue.avatarColor || "#cccccc";
+  
+  // 智慧判斷：是不是第四關 (id 包含 q4)
+  const isQ4 = dialogue.id && dialogue.id.includes("q4");
+
+  // 只有在第四關，且有設定圖片時，才顯示側邊的頭像框
+  if (isQ4 && dialogue.sprite) {
+    dialogueAvatar.src = dialogue.sprite;
+    dialogueAvatar.classList.remove("is-hidden");
+    dialogueAvatar.style.backgroundColor = dialogue.avatarColor || "#cccccc";
+  } 
+  // 第一到第三關，自動隱藏側邊頭像框
+  else {
+    dialogueAvatar.classList.add("is-hidden");
+  }
 }
 
 // 🔽 輔助更新單一立繪函式 🔽
@@ -153,39 +169,40 @@ function updateSingleSprite(element, imagePath) {
   element.classList.remove("is-hidden");
 }
 
-// 🔽 更新整體視覺 (三人舞台版) 🔽
+// 🔽 修改：更新整體視覺 (前三關全螢幕大立繪，第四關隱藏) 🔽
 function updateVisuals(node) {
-  // 🔽 1. 檢查並更新背景 (已解除封印) 🔽
+  // 1. 檢查並更新背景
   if (node.bg && typeof bgLayer !== 'undefined') {
     bgLayer.style.backgroundImage = `url('${node.bg}')`;
   }
 
   const hasSprites = Boolean(node.sprites);
   const hasSingleSprite = Boolean(node.sprite);
+  const isSystemNarration = node.speaker === "系統" || node.speaker === "旁白";
 
-  const isSystemNarration =
-    node.speaker === "系統" ||
-    node.speaker === "旁白";
+  // 智慧判斷：是不是第四關 (id 包含 q4)
+  const isQ4 = node.id && node.id.includes("q4");
 
-  // 2. 若是系統或旁白且沒有強制指定圖片，全部隱藏
-  if (isSystemNarration && !hasSprites && !hasSingleSprite) {
+  // 2. 判斷全螢幕立繪要不要顯示
+  // 如果是第四關 (要專心調查背景)，或是系統旁白且沒強制指定圖片，就強制隱藏全螢幕立繪
+  if (isQ4 || (isSystemNarration && !hasSprites && !hasSingleSprite)) {
     updateSingleSprite(spriteLeft, null);
     updateSingleSprite(spriteCenter, null);
     updateSingleSprite(spriteRight, null);
   } 
-  // 3. 啟動多人同台模式 (sprites 物件)
+  // 第一～三關：啟動多人同台模式 (sprites 物件)
   else if (hasSprites) {
     updateSingleSprite(spriteLeft, node.sprites.left);
     updateSingleSprite(spriteCenter, node.sprites.center);
     updateSingleSprite(spriteRight, node.sprites.right);
   } 
-  // 4. 相容舊版的單人模式 (sprite 字串) -> 放在中間
+  // 第一～三關：相容舊版的單人模式 (sprite 字串) -> 放在中間
   else if (hasSingleSprite) {
     updateSingleSprite(spriteLeft, null);
     updateSingleSprite(spriteCenter, node.sprite);
     updateSingleSprite(spriteRight, null);
   } 
-  // 5. 什麼都沒有，全部清空
+  // 什麼都沒有，全部清空
   else {
     updateSingleSprite(spriteLeft, null);
     updateSingleSprite(spriteCenter, null);
@@ -636,7 +653,7 @@ function failPatrol() {
 
 function winPatrol() {
   stopPatrol();
-  dialogueBox.hidden = false;
+  dialogueContainer.hidden = false; // 恢復顯示整個對話容器
   showNode(dialogueMap.get("q3_canvas").nextCorrect);
 }
 
@@ -693,7 +710,7 @@ function handlePatrolKey(event) {
 
 function startPatrol() {
   hideInteractionPanels();
-  dialogueBox.hidden = true;
+  dialogueContainer.hidden = true; // 隱藏整個對話容器
   gameCanvas.hidden = false;
   gameCanvas.classList.add("is-visible");
   patrolState.active = true;
@@ -702,8 +719,7 @@ function startPatrol() {
   openVideoTutorial();
 }
 
-// ---------- 劇情節點與一般互動 ----------
-
+// 🔽 修改：劇情節點切換邏輯 (處理隱藏對話容器) 🔽
 function showNode(nodeId) {
   const node = dialogueMap.get(nodeId);
   if (!node) return;
@@ -720,7 +736,13 @@ function showNode(nodeId) {
 
   gameCanvas.hidden = true;
   gameCanvas.classList.remove("is-visible");
-  dialogueBox.hidden = false;
+  
+  // 🚨 智慧判斷：如果是調查模式，隱藏包含頭像在內的整個對話容器；其他模式則顯示
+  if (node.type === "investigation") {
+    dialogueContainer.hidden = true;
+  } else {
+    dialogueContainer.hidden = false;
+  }
   
   if (node.type === "dialogue") startTypewriter(node);
   if (node.type === "choice") renderChoice(node);
